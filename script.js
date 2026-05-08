@@ -153,8 +153,14 @@ function positionCalloutRays() {
     const ellipseRadius = 1 / Math.sqrt((unitX * unitX) / (radiusX * radiusX) + (unitY * unitY) / (radiusY * radiusY));
     const startX = centerX + unitX * (ellipseRadius + imageGap);
     const startY = centerY + unitY * (ellipseRadius + imageGap);
-    const endX = labelCenterX;
-    const endY = labelCenterY;
+    const halfWidth = calloutElement.offsetWidth / 2;
+    const halfHeight = calloutElement.offsetHeight / 2;
+    const labelRadius = Math.min(
+      Math.abs(unitX) > 0.01 ? halfWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
+      Math.abs(unitY) > 0.01 ? halfHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
+    );
+    const endX = labelCenterX - unitX * labelRadius;
+    const endY = labelCenterY - unitY * labelRadius;
     const lineLength = Math.max(18, Math.hypot(endX - startX, endY - startY));
     const lineRotate = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
     const rayElement = rayElements[index];
