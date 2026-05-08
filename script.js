@@ -105,8 +105,10 @@ function renderMenu() {
           style="--label-offset: ${item.labelOffset || "0px"};"
           aria-label="${item.title}"
         >
-          <img src="${item.image}" alt="" />
-          <span>${item.name}</span>
+          <span class="menu-item-content">
+            <img src="${item.image}" alt="" />
+            <span>${item.name}</span>
+          </span>
         </button>
       `
     )
