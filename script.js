@@ -131,6 +131,47 @@ function prepareCalloutOrigins() {
   });
 }
 
+function positionCalloutRays() {
+  const posterRect = poster.getBoundingClientRect();
+  const imageRect = detailImage.getBoundingClientRect();
+  const centerX = imageRect.left - posterRect.left + imageRect.width / 2;
+  const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
+  const radiusX = imageRect.width * 0.48;
+  const radiusY = imageRect.height * 0.38;
+  const imageGap = 10;
+  const labelGap = 8;
+
+  callouts.querySelectorAll(".callout").forEach((calloutElement) => {
+    const labelCenterX = calloutElement.offsetLeft + calloutElement.offsetWidth / 2;
+    const labelCenterY = calloutElement.offsetTop + calloutElement.offsetHeight / 2;
+    const dx = labelCenterX - centerX;
+    const dy = labelCenterY - centerY;
+    const distance = Math.hypot(dx, dy) || 1;
+    const unitX = dx / distance;
+    const unitY = dy / distance;
+    const ellipseRadius = 1 / Math.sqrt((unitX * unitX) / (radiusX * radiusX) + (unitY * unitY) / (radiusY * radiusY));
+    const halfWidth = calloutElement.offsetWidth / 2;
+    const halfHeight = calloutElement.offsetHeight / 2;
+    const labelRadius = Math.min(
+      Math.abs(unitX) > 0.01 ? halfWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
+      Math.abs(unitY) > 0.01 ? halfHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
+    );
+    const startX = centerX + unitX * (ellipseRadius + imageGap);
+    const startY = centerY + unitY * (ellipseRadius + imageGap);
+    const endX = labelCenterX - unitX * (labelRadius + labelGap);
+    const endY = labelCenterY - unitY * (labelRadius + labelGap);
+    const lineX = startX - calloutElement.offsetLeft;
+    const lineY = startY - calloutElement.offsetTop;
+    const lineLength = Math.max(18, Math.hypot(endX - startX, endY - startY));
+    const lineRotate = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
+
+    calloutElement.style.setProperty("--line-x", `${lineX}px`);
+    calloutElement.style.setProperty("--line-y", `${lineY}px`);
+    calloutElement.style.setProperty("--line-l", `${lineLength}px`);
+    calloutElement.style.setProperty("--line-r", `${lineRotate}deg`);
+  });
+}
+
 function prepareMenuParting(sourceButton) {
   const posterRect = poster.getBoundingClientRect();
   const posterCenterX = posterRect.left + posterRect.width / 2;
@@ -189,10 +230,6 @@ function openDetail(id, sourceButton) {
             --y: ${ingredient.y};
             --box: ${ingredient.box};
             --size: ${ingredient.size};
-            --line-x: ${ingredient.lineX};
-            --line-y: ${ingredient.lineY};
-            --line-l: ${ingredient.lineLength};
-            --line-r: ${ingredient.lineRotate};
             --delay: ${120 + index * 55}ms;
           "
         >${ingredient.label}</div>
@@ -220,6 +257,7 @@ function openDetail(id, sourceButton) {
   };
 
   prepareCalloutOrigins();
+  positionCalloutRays();
   poster.classList.add("is-callout-ready");
 
   if (sourceBox) {
@@ -274,6 +312,10 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && poster.classList.contains("is-detail")) {
     closeDetail();
   }
+});
+
+window.addEventListener("resize", () => {
+  if (poster.classList.contains("is-detail")) positionCalloutRays();
 });
 
 renderMenu();
