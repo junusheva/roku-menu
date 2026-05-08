@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roku Toasts</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="site-shell">
+      <section class="poster" id="menu" aria-live="polite">
+        <button class="back-button" id="backButton" type="button" aria-label="Назад к меню">
+          <span aria-hidden="true"></span>
+        </button>
+
+        <img class="logo" src="assets/roku-logo.png" alt="Roku coffee and matcha bar" />
+        <h1 id="posterTitle">ТОСТЫ</h1>
+
+        <div class="menu-view" id="menuView" aria-label="Меню тостов"></div>
+
+        <div class="detail-view" id="detailView" aria-hidden="true">
+          <div class="toast-stage">
+            <img class="detail-toast" id="detailImage" src="assets/tuna.png" alt="" />
+          </div>
+          <div class="callouts" id="callouts"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
