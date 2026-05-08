@@ -2,6 +2,8 @@
   color-scheme: light;
   --rose: #f0e4dc;
   --pearl: #f6f4f5;
+  --page-bg:
+    radial-gradient(circle at 50% 36%, var(--pearl) 0 34%, var(--rose) 84%, #ead8ce 100%);
   --paper: #fbf7f4;
   --ink: #080708;
   --shadow: rgba(67, 48, 33, 0.2);
@@ -21,16 +23,14 @@
 html {
   min-width: 320px;
   min-height: 100%;
-  background:
-    radial-gradient(circle at 50% 38%, var(--pearl) 0 34%, var(--rose) 78%, #ead8ce 100%);
+  background: var(--page-bg) fixed;
 }
 
 body {
   min-width: 320px;
   min-height: 100svh;
   margin: 0;
-  background:
-    radial-gradient(circle at 50% 38%, var(--pearl) 0 34%, var(--rose) 78%, #ead8ce 100%);
+  background: var(--page-bg) fixed;
   color: var(--ink);
   font-family: var(--font-display);
   font-weight: 500;
@@ -44,6 +44,7 @@ button {
   display: grid;
   place-items: start center;
   min-height: 100svh;
+  background: var(--page-bg) fixed;
 }
 
 .poster {
@@ -52,9 +53,7 @@ button {
   min-height: 100svh;
   overflow: hidden;
   padding: 14px clamp(14px, 4vw, 26px) 32px;
-  background:
-    radial-gradient(circle at 50% 36%, var(--pearl) 0 34%, var(--rose) 84%),
-    var(--rose);
+  background: transparent;
 }
 
 .logo {
