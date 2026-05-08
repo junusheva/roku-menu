@@ -139,9 +139,10 @@ function positionCalloutRays() {
   const radiusX = imageRect.width * 0.48;
   const radiusY = imageRect.height * 0.38;
   const imageGap = 10;
-  const labelGap = 8;
+  const calloutElements = [...callouts.querySelectorAll(".callout")];
+  const rayElements = [...callouts.querySelectorAll(".callout-ray")];
 
-  callouts.querySelectorAll(".callout").forEach((calloutElement) => {
+  calloutElements.forEach((calloutElement, index) => {
     const labelCenterX = calloutElement.offsetLeft + calloutElement.offsetWidth / 2;
     const labelCenterY = calloutElement.offsetTop + calloutElement.offsetHeight / 2;
     const dx = labelCenterX - centerX;
@@ -150,25 +151,19 @@ function positionCalloutRays() {
     const unitX = dx / distance;
     const unitY = dy / distance;
     const ellipseRadius = 1 / Math.sqrt((unitX * unitX) / (radiusX * radiusX) + (unitY * unitY) / (radiusY * radiusY));
-    const halfWidth = calloutElement.offsetWidth / 2;
-    const halfHeight = calloutElement.offsetHeight / 2;
-    const labelRadius = Math.min(
-      Math.abs(unitX) > 0.01 ? halfWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
-      Math.abs(unitY) > 0.01 ? halfHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
-    );
     const startX = centerX + unitX * (ellipseRadius + imageGap);
     const startY = centerY + unitY * (ellipseRadius + imageGap);
-    const endX = labelCenterX - unitX * (labelRadius + labelGap);
-    const endY = labelCenterY - unitY * (labelRadius + labelGap);
-    const lineX = startX - calloutElement.offsetLeft;
-    const lineY = startY - calloutElement.offsetTop;
+    const endX = labelCenterX;
+    const endY = labelCenterY;
     const lineLength = Math.max(18, Math.hypot(endX - startX, endY - startY));
     const lineRotate = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
+    const rayElement = rayElements[index];
 
-    calloutElement.style.setProperty("--line-x", `${lineX}px`);
-    calloutElement.style.setProperty("--line-y", `${lineY}px`);
-    calloutElement.style.setProperty("--line-l", `${lineLength}px`);
-    calloutElement.style.setProperty("--line-r", `${lineRotate}deg`);
+    if (!rayElement) return;
+    rayElement.style.setProperty("--line-x", `${startX}px`);
+    rayElement.style.setProperty("--line-y", `${startY}px`);
+    rayElement.style.setProperty("--line-l", `${lineLength}px`);
+    rayElement.style.setProperty("--line-r", `${lineRotate}deg`);
   });
 }
 
@@ -223,6 +218,11 @@ function openDetail(id, sourceButton) {
   callouts.innerHTML = item.ingredients
     .map(
       (ingredient, index) => `
+        <span
+          class="callout-ray"
+          style="--delay: ${120 + index * 55}ms;"
+          aria-hidden="true"
+        ></span>
         <div
           class="callout"
           style="

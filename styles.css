@@ -202,6 +202,7 @@ h1 {
 
 .callout {
   position: absolute;
+  z-index: 2;
   left: var(--x);
   top: var(--y);
   width: var(--box);
@@ -215,17 +216,21 @@ h1 {
   transition-delay: var(--delay);
 }
 
-.callout::after {
-  content: "";
+.callout-ray {
   position: absolute;
-  left: var(--line-x);
-  top: var(--line-y);
+  z-index: 1;
+  left: 0;
+  top: 0;
   width: var(--line-l);
   height: 1px;
   background: var(--ink);
+  opacity: 0;
   transform: rotate(var(--line-r)) scaleX(0);
   transform-origin: left center;
-  transition: transform 360ms cubic-bezier(0.18, 0.84, 0.28, 1);
+  translate: var(--line-x) var(--line-y);
+  transition:
+    opacity 180ms ease,
+    transform 420ms cubic-bezier(0.18, 0.84, 0.28, 1);
   transition-delay: calc(var(--delay) + 90ms);
 }
 
@@ -294,7 +299,8 @@ h1 {
   transform: translate(0, 0) scale(1);
 }
 
-.poster.is-detail.is-callout-ready .callout::after {
+.poster.is-detail.is-callout-ready .callout-ray {
+  opacity: 1;
   transform: rotate(var(--line-r)) scaleX(1);
 }
 
