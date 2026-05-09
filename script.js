@@ -117,6 +117,82 @@ function renderMenu() {
   `;
 }
 
+function clamp(value, min, max) {
+  if (max < min) return min;
+  return Math.min(Math.max(value, min), max);
+}
+
+function coordToPixels(value, basis) {
+  if (value.endsWith("%")) return (parseFloat(value) / 100) * basis;
+  return parseFloat(value) || 0;
+}
+
+function boxesOverlap(a, b) {
+  return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+}
+
+function overlapArea(a, b) {
+  if (!boxesOverlap(a, b)) return 0;
+  return (Math.min(a.right, b.right) - Math.max(a.left, b.left)) * (Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+}
+
+function fitCalloutsToPoster() {
+  const posterRect = poster.getBoundingClientRect();
+  const imageRect = detailImage.getBoundingClientRect();
+  const padding = 8;
+  const imageGap = 42;
+  const labelGap = 12;
+  const posterBox = {
+    width: posterRect.width,
+    height: posterRect.height
+  };
+  const safeImage = {
+    left: imageRect.left - posterRect.left - imageGap,
+    right: imageRect.right - posterRect.left + imageGap,
+    top: imageRect.top - posterRect.top - imageGap,
+    bottom: imageRect.bottom - posterRect.top + imageGap
+  };
+
+  callouts.querySelectorAll(".callout").forEach((calloutElement) => {
+    const desiredLeft = coordToPixels(calloutElement.dataset.x || "0px", posterBox.width);
+    const desiredTop = coordToPixels(calloutElement.dataset.y || "0px", posterBox.height);
+    const width = calloutElement.offsetWidth;
+    const height = calloutElement.offsetHeight;
+    const minLeft = padding;
+    const maxLeft = posterBox.width - width - padding;
+    const minTop = padding;
+    const maxTop = posterBox.height - height - padding;
+    const baseLeft = clamp(desiredLeft, minLeft, maxLeft);
+    const baseTop = clamp(desiredTop, minTop, maxTop);
+    const candidates = [
+      [baseLeft, baseTop],
+      [safeImage.left - width - labelGap, baseTop],
+      [safeImage.right + labelGap, baseTop],
+      [baseLeft, safeImage.top - height - labelGap],
+      [baseLeft, safeImage.bottom + labelGap],
+      [safeImage.left - width - labelGap, safeImage.top - height - labelGap],
+      [safeImage.right + labelGap, safeImage.top - height - labelGap],
+      [safeImage.left - width - labelGap, safeImage.bottom + labelGap],
+      [safeImage.right + labelGap, safeImage.bottom + labelGap]
+    ];
+    let best = { left: baseLeft, top: baseTop, score: Number.POSITIVE_INFINITY };
+
+    candidates.forEach(([candidateLeft, candidateTop]) => {
+      const left = clamp(candidateLeft, minLeft, maxLeft);
+      const top = clamp(candidateTop, minTop, maxTop);
+      const box = { left, top, right: left + width, bottom: top + height };
+      const distance = Math.hypot(left - desiredLeft, top - desiredTop);
+      const collisionPenalty = overlapArea(box, safeImage) * 1000;
+      const score = distance + collisionPenalty;
+
+      if (score < best.score) best = { left, top, score };
+    });
+
+    calloutElement.style.left = `${best.left}px`;
+    calloutElement.style.top = `${best.top}px`;
+  });
+}
+
 function prepareCalloutOrigins() {
   const posterRect = poster.getBoundingClientRect();
   const imageRect = detailImage.getBoundingClientRect();
@@ -136,9 +212,10 @@ function positionCalloutRays() {
   const imageRect = detailImage.getBoundingClientRect();
   const centerX = imageRect.left - posterRect.left + imageRect.width / 2;
   const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
-  const radiusX = imageRect.width * 0.48;
-  const radiusY = imageRect.height * 0.38;
-  const imageGap = 10;
+  const imageGap = 18;
+  const labelGap = 12;
+  const halfImageWidth = imageRect.width / 2 + imageGap;
+  const halfImageHeight = imageRect.height / 2 + imageGap;
   const calloutElements = [...callouts.querySelectorAll(".callout")];
   const rayElements = [...callouts.querySelectorAll(".callout-ray")];
 
@@ -150,18 +227,21 @@ function positionCalloutRays() {
     const distance = Math.hypot(dx, dy) || 1;
     const unitX = dx / distance;
     const unitY = dy / distance;
-    const ellipseRadius = 1 / Math.sqrt((unitX * unitX) / (radiusX * radiusX) + (unitY * unitY) / (radiusY * radiusY));
-    const startX = centerX + unitX * (ellipseRadius + imageGap);
-    const startY = centerY + unitY * (ellipseRadius + imageGap);
+    const imageRadius = Math.min(
+      Math.abs(unitX) > 0.01 ? halfImageWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
+      Math.abs(unitY) > 0.01 ? halfImageHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
+    );
+    const startX = centerX + unitX * imageRadius;
+    const startY = centerY + unitY * imageRadius;
     const halfWidth = calloutElement.offsetWidth / 2;
     const halfHeight = calloutElement.offsetHeight / 2;
     const labelRadius = Math.min(
       Math.abs(unitX) > 0.01 ? halfWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
       Math.abs(unitY) > 0.01 ? halfHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
     );
-    const endX = labelCenterX - unitX * labelRadius;
-    const endY = labelCenterY - unitY * labelRadius;
-    const lineLength = Math.max(18, Math.hypot(endX - startX, endY - startY));
+    const endX = labelCenterX - unitX * (labelRadius + labelGap);
+    const endY = labelCenterY - unitY * (labelRadius + labelGap);
+    const lineLength = Math.max(0, Math.hypot(endX - startX, endY - startY));
     const lineRotate = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
     const rayElement = rayElements[index];
 
@@ -231,6 +311,8 @@ function openDetail(id, sourceButton) {
         ></span>
         <div
           class="callout"
+          data-x="${ingredient.x}"
+          data-y="${ingredient.y}"
           style="
             --x: ${ingredient.x};
             --y: ${ingredient.y};
@@ -262,6 +344,7 @@ function openDetail(id, sourceButton) {
     width: targetRect.width
   };
 
+  fitCalloutsToPoster();
   prepareCalloutOrigins();
   positionCalloutRays();
   poster.classList.add("is-callout-ready");
@@ -321,7 +404,11 @@ document.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("resize", () => {
-  if (poster.classList.contains("is-detail")) positionCalloutRays();
+  if (poster.classList.contains("is-detail")) {
+    fitCalloutsToPoster();
+    prepareCalloutOrigins();
+    positionCalloutRays();
+  }
 });
 
 renderMenu();
