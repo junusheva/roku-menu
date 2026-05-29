@@ -237,6 +237,56 @@ h1 {
   outline-offset: 5px;
 }
 
+.breakfast-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: clamp(10px, 4vw, 28px);
+  row-gap: clamp(44px, 10vw, 68px);
+  align-items: start;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: clamp(72px, 16vw, 110px);
+}
+
+.breakfast-item {
+  display: grid;
+  justify-items: center;
+  align-items: start;
+  gap: 10px;
+  min-width: 0;
+  transform: translateY(var(--drop));
+}
+
+.breakfast-item:nth-child(2n) {
+  --drop: clamp(42px, 12vw, 76px);
+}
+
+.breakfast-item:nth-child(2n + 1) {
+  --drop: 0px;
+}
+
+.breakfast-item img {
+  display: block;
+  width: min(100%, var(--image-width, 205px));
+  height: auto;
+  filter: drop-shadow(12px 18px 13px var(--shadow));
+}
+
+.breakfast-item > span {
+  display: block;
+  max-width: min(100%, 180px);
+  font-size: clamp(14px, 3.8vw, 18px);
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  text-transform: lowercase;
+}
+
+.poster.is-breakfasts h1 {
+  margin-bottom: clamp(24px, 6vw, 36px);
+  font-size: clamp(42px, 10.6vw, 62px);
+}
+
 .detail-view {
   position: absolute;
   inset: 0;
@@ -404,6 +454,15 @@ h1 {
   .main-view {
     padding-top: clamp(178px, 23svh, 205px);
   }
+
+  .breakfast-board {
+    column-gap: 4px;
+    row-gap: 42px;
+  }
+
+  .breakfast-item img {
+    width: min(100%, calc(var(--image-width, 205px) * 0.88));
+  }
 }
 
 @media (min-width: 720px) {
@@ -424,6 +483,20 @@ h1 {
   }
 
   .menu-item:nth-child(2n) {
+    --drop: 82px;
+  }
+
+  .breakfast-board {
+    max-width: 620px;
+    column-gap: 54px;
+    row-gap: 74px;
+  }
+
+  .breakfast-item img {
+    width: min(100%, calc(var(--image-width, 205px) * 1.26));
+  }
+
+  .breakfast-item:nth-child(2n) {
     --drop: 82px;
   }
 }

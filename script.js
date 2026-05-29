@@ -79,6 +79,67 @@ const menuItems = [
   }
 ];
 
+const breakfastItems = [
+  {
+    name: "Базовый завтрак",
+    shortName: "базовый завтрак",
+    price: "580с",
+    image: "assets/breakfast-basic.png",
+    imageWidth: "205px",
+    description:
+      "2 вареных яйца, малосольная форель, сыр Маасдам, мисо масло, маринованный огурчик, ломтик хлеба"
+  },
+  {
+    name: "Французский омлет",
+    shortName: "французский омлет",
+    price: "320с",
+    image: "assets/breakfast-french-omelet.png",
+    imageWidth: "210px",
+    description: "классический французский омлет с трюфельным соусом, посыпается пармезаном и жареным нори"
+  },
+  {
+    name: "Френч тост",
+    shortName: "френч тост",
+    price: "470с",
+    image: "assets/breakfast-french-toast.png",
+    imageWidth: "205px",
+    description:
+      "пропитанный хлеб с карамелизированной корочкой, подается с кремом, карамелизированный бананом и арахисом"
+  },
+  {
+    name: "Гранола с манговым йогуртом",
+    shortName: "гранола с<br>манговым йогуртом",
+    price: "550с",
+    image: "assets/breakfast-granola.png",
+    imageWidth: "145px",
+    description: "манговый йогурт с лемонграссом, домашняя гранола, засахаренный арахис, голубика"
+  },
+  {
+    name: "Авокадо тост",
+    shortName: "авокадо тост",
+    price: "570с",
+    image: "assets/breakfast-avocado-toast.png",
+    imageWidth: "205px",
+    description: "творожный крем, зеленый горошек, авокадо, шпинат, соус песто, маринованное яйцо"
+  },
+  {
+    name: "Чикен салат",
+    shortName: "чикен салат",
+    price: "350с",
+    image: "assets/breakfast-chicken-salad.png",
+    imageWidth: "165px",
+    description: "курица в панировке, салат айсберг, соус айоли, лимон, посыпается пармезаном и домашними чипсами"
+  },
+  {
+    name: "Зеленый салат",
+    shortName: "зеленый салат",
+    price: "390с",
+    image: "assets/breakfast-green-salad.png",
+    imageWidth: "205px",
+    description: ""
+  }
+];
+
 const poster = document.querySelector("#menu");
 const posterTitle = document.querySelector("#posterTitle");
 const mainView = document.querySelector("#mainView");
@@ -93,7 +154,7 @@ function callout(label, x, y, box, size, lineX, lineY, lineLength, lineRotate) {
   return { label, x, y, box, size, lineX, lineY, lineLength, lineRotate };
 }
 
-function renderMenu() {
+function renderToasts() {
   menuView.innerHTML = `
     <div class="menu-board">
     ${menuItems
@@ -116,6 +177,25 @@ function renderMenu() {
     .join("")}
     </div>
   `;
+  menuView.setAttribute("aria-label", "Меню тостов");
+}
+
+function renderBreakfasts() {
+  menuView.innerHTML = `
+    <div class="breakfast-board">
+    ${breakfastItems
+    .map(
+      (item) => `
+        <article class="breakfast-item" style="--image-width: ${item.imageWidth};">
+          <img src="${item.image}" alt="" />
+          <span>${item.shortName}</span>
+        </article>
+      `
+    )
+    .join("")}
+    </div>
+  `;
+  menuView.setAttribute("aria-label", "Меню завтраков");
 }
 
 function clamp(value, min, max) {
@@ -285,7 +365,8 @@ function resetMenuParting() {
 
 function openToasts() {
   window.clearTimeout(zoomTimer);
-  poster.classList.remove("is-home", "is-detail", "is-animating", "is-callout-ready");
+  renderToasts();
+  poster.classList.remove("is-home", "is-breakfasts", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-toasts");
   detailView.style.transition = "";
   detailView.style.transform = "";
@@ -296,9 +377,23 @@ function openToasts() {
   poster.scrollIntoView({ block: "start" });
 }
 
+function openBreakfasts() {
+  window.clearTimeout(zoomTimer);
+  renderBreakfasts();
+  poster.classList.remove("is-home", "is-toasts", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.add("is-breakfasts");
+  detailView.style.transition = "";
+  detailView.style.transform = "";
+  detailView.setAttribute("aria-hidden", "true");
+  posterTitle.textContent = "ЗАВТРАКИ";
+  resetMenuParting();
+  document.querySelectorAll(".menu-item.is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  poster.scrollIntoView({ block: "start" });
+}
+
 function openHome() {
   window.clearTimeout(zoomTimer);
-  poster.classList.remove("is-toasts", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.remove("is-toasts", "is-breakfasts", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-home");
   detailView.style.transition = "";
   detailView.style.transform = "";
@@ -422,6 +517,7 @@ mainView.addEventListener("click", (event) => {
   const categoryButton = event.target.closest(".main-menu-link");
   if (!categoryButton) return;
   if (categoryButton.dataset.category === "toasts") openToasts();
+  if (categoryButton.dataset.category === "breakfasts") openBreakfasts();
 });
 
 menuView.addEventListener("click", (event) => {
@@ -443,7 +539,7 @@ document.addEventListener("keydown", (event) => {
       closeDetail();
       return;
     }
-    if (poster.classList.contains("is-toasts")) openHome();
+    if (poster.classList.contains("is-toasts") || poster.classList.contains("is-breakfasts")) openHome();
   }
 });
 
@@ -455,4 +551,4 @@ window.addEventListener("resize", () => {
   }
 });
 
-renderMenu();
+renderToasts();
