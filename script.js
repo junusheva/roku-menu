@@ -81,6 +81,7 @@ const menuItems = [
 
 const poster = document.querySelector("#menu");
 const posterTitle = document.querySelector("#posterTitle");
+const mainView = document.querySelector("#mainView");
 const menuView = document.querySelector("#menuView");
 const detailView = document.querySelector("#detailView");
 const detailImage = document.querySelector("#detailImage");
@@ -282,6 +283,31 @@ function resetMenuParting() {
   });
 }
 
+function openToasts() {
+  window.clearTimeout(zoomTimer);
+  poster.classList.remove("is-home", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.add("is-toasts");
+  detailView.style.transition = "";
+  detailView.style.transform = "";
+  detailView.setAttribute("aria-hidden", "true");
+  posterTitle.textContent = "ТОСТЫ";
+  resetMenuParting();
+  document.querySelectorAll(".menu-item.is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  poster.scrollIntoView({ block: "start" });
+}
+
+function openHome() {
+  window.clearTimeout(zoomTimer);
+  poster.classList.remove("is-toasts", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.add("is-home");
+  detailView.style.transition = "";
+  detailView.style.transform = "";
+  detailView.setAttribute("aria-hidden", "true");
+  resetMenuParting();
+  document.querySelectorAll(".menu-item.is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  poster.scrollIntoView({ block: "start" });
+}
+
 function openDetail(id, sourceButton) {
   const item = menuItems.find((menuItem) => menuItem.id === id);
   if (!item) return;
@@ -328,6 +354,8 @@ function openDetail(id, sourceButton) {
   poster.classList.remove("is-callout-ready");
   resetMenuParting();
   prepareMenuParting(sourceButton);
+  poster.classList.remove("is-home");
+  poster.classList.add("is-toasts");
   poster.classList.add("is-detail");
   poster.classList.add("is-animating");
   detailView.setAttribute("aria-hidden", "false");
@@ -390,16 +418,32 @@ function closeDetail() {
   poster.scrollIntoView({ block: "start" });
 }
 
+mainView.addEventListener("click", (event) => {
+  const categoryButton = event.target.closest(".main-menu-link");
+  if (!categoryButton) return;
+  if (categoryButton.dataset.category === "toasts") openToasts();
+});
+
 menuView.addEventListener("click", (event) => {
   const itemButton = event.target.closest(".menu-item");
   if (itemButton) openDetail(itemButton.dataset.id, itemButton);
 });
 
-backButton.addEventListener("click", closeDetail);
+backButton.addEventListener("click", () => {
+  if (poster.classList.contains("is-detail")) {
+    closeDetail();
+    return;
+  }
+  openHome();
+});
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && poster.classList.contains("is-detail")) {
-    closeDetail();
+  if (event.key === "Escape") {
+    if (poster.classList.contains("is-detail")) {
+      closeDetail();
+      return;
+    }
+    if (poster.classList.contains("is-toasts")) openHome();
   }
 });
 
