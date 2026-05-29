@@ -5,6 +5,7 @@
   --page-bg:
     radial-gradient(circle at 50% 36%, var(--pearl) 0 34%, var(--rose) 84%, #ead8ce 100%);
   --paper: #fbf7f4;
+  --label-bg: #f6f1ef;
   --ink: #080708;
   --shadow: rgba(67, 48, 33, 0.2);
   --font-display: "Cuphead Memphis", "Cooper Black", "Courier New", monospace;
@@ -219,6 +220,11 @@ h1 {
 .menu-item-content > span {
   display: grid;
   justify-self: center;
+  position: relative;
+  z-index: 2;
+  padding: 5px;
+  background: var(--label-bg);
+  box-shadow: 0 0 0 2px var(--label-bg);
   font-size: clamp(14px, 3.7vw, 18px);
   font-weight: 500;
   line-height: 1;
@@ -283,7 +289,12 @@ h1 {
 
 .breakfast-item > span {
   display: block;
+  position: relative;
+  z-index: 2;
   max-width: min(100%, 180px);
+  padding: 5px;
+  background: var(--label-bg);
+  box-shadow: 0 0 0 2px var(--label-bg);
   font-size: clamp(14px, 3.8vw, 18px);
   font-weight: 500;
   line-height: 1;
@@ -353,7 +364,7 @@ h1 {
 
 .callout {
   position: absolute;
-  z-index: 2;
+  z-index: 6;
   left: var(--x);
   top: var(--y);
   display: inline-flex;
@@ -362,6 +373,8 @@ h1 {
   width: max-content;
   max-width: calc(100% - 20px);
   padding: 5px;
+  background: var(--label-bg);
+  box-shadow: 0 0 0 2px var(--label-bg);
   color: var(--ink);
   font-size: clamp(14px, var(--size), 20px);
   font-weight: 500;
