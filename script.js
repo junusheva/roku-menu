@@ -81,62 +81,96 @@ const menuItems = [
 
 const breakfastItems = [
   {
+    id: "breakfast-basic",
     name: "Базовый завтрак",
     shortName: "базовый завтрак",
+    title: "БАЗОВЫЙ ЗАВТРАК",
     price: "580с",
     image: "assets/breakfast-basic.png",
     imageWidth: "205px",
     description:
-      "2 вареных яйца, малосольная форель, сыр Маасдам, мисо масло, маринованный огурчик, ломтик хлеба"
+      "2 вареных яйца, малосольная форель, сыр Маасдам, мисо масло, маринованный огурчик, ломтик хлеба",
+    ingredients: detailCallouts([
+      "вареные яйца",
+      "малосольная форель",
+      "сыр Маасдам",
+      "мисо масло",
+      "маринованный огурчик",
+      "ломтик хлеба"
+    ])
   },
   {
+    id: "breakfast-french-omelet",
     name: "Французский омлет",
     shortName: "французский омлет",
+    title: "ФРАНЦУЗСКИЙ ОМЛЕТ",
     price: "320с",
     image: "assets/breakfast-french-omelet.png",
     imageWidth: "210px",
-    description: "классический французский омлет с трюфельным соусом, посыпается пармезаном и жареным нори"
+    description: "классический французский омлет с трюфельным соусом, посыпается пармезаном и жареным нори",
+    ingredients: detailCallouts(["французский омлет", "трюфельный соус", "пармезан", "жареный нори"])
   },
   {
+    id: "breakfast-french-toast",
     name: "Френч тост",
     shortName: "френч тост",
+    title: "ФРЕНЧ ТОСТ",
     price: "470с",
     image: "assets/breakfast-french-toast.png",
     imageWidth: "205px",
     description:
-      "пропитанный хлеб с карамелизированной корочкой, подается с кремом, карамелизированный бананом и арахисом"
+      "пропитанный хлеб с карамелизированной корочкой, подается с кремом, карамелизированный бананом и арахисом",
+    ingredients: detailCallouts([
+      "пропитанный хлеб",
+      "карамелизированная<br>корочка",
+      "крем",
+      "карамелизированный<br>банан",
+      "арахис"
+    ])
   },
   {
+    id: "breakfast-granola",
     name: "Гранола с манговым йогуртом",
     shortName: "гранола с<br>манговым йогуртом",
+    title: "ГРАНОЛА",
     price: "550с",
     image: "assets/breakfast-granola.png",
     imageWidth: "145px",
-    description: "манговый йогурт с лемонграссом, домашняя гранола, засахаренный арахис, голубика"
+    description: "манговый йогурт с лемонграссом, домашняя гранола, засахаренный арахис, голубика",
+    ingredients: detailCallouts(["манговый йогурт", "лемонграсс", "домашняя гранола", "засахаренный<br>арахис", "голубика"])
   },
   {
+    id: "breakfast-avocado-toast",
     name: "Авокадо тост",
     shortName: "авокадо тост",
+    title: "АВОКАДО ТОСТ",
     price: "570с",
     image: "assets/breakfast-avocado-toast.png",
     imageWidth: "205px",
-    description: "творожный крем, зеленый горошек, авокадо, шпинат, соус песто, маринованное яйцо"
+    description: "творожный крем, зеленый горошек, авокадо, шпинат, соус песто, маринованное яйцо",
+    ingredients: detailCallouts(["творожный крем", "зеленый горошек", "авокадо", "шпинат", "соус песто", "маринованное яйцо"])
   },
   {
+    id: "breakfast-chicken-salad",
     name: "Чикен салат",
     shortName: "чикен салат",
+    title: "ЧИКЕН САЛАТ",
     price: "350с",
     image: "assets/breakfast-chicken-salad.png",
     imageWidth: "165px",
-    description: "курица в панировке, салат айсберг, соус айоли, лимон, посыпается пармезаном и домашними чипсами"
+    description: "курица в панировке, салат айсберг, соус айоли, лимон, посыпается пармезаном и домашними чипсами",
+    ingredients: detailCallouts(["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"])
   },
   {
+    id: "breakfast-green-salad",
     name: "Зеленый салат",
     shortName: "зеленый салат",
+    title: "ЗЕЛЕНЫЙ САЛАТ",
     price: "390с",
     image: "assets/breakfast-green-salad.png",
     imageWidth: "205px",
-    description: ""
+    description: "",
+    ingredients: detailCallouts(["зеленые овощи", "авокадо", "огурец", "нори", "лимон", "кунжут"])
   }
 ];
 
@@ -149,9 +183,34 @@ const detailImage = document.querySelector("#detailImage");
 const callouts = document.querySelector("#callouts");
 const backButton = document.querySelector("#backButton");
 let zoomTimer;
+let activeCategory = "home";
 
 function callout(label, x, y, box, size, lineX, lineY, lineLength, lineRotate) {
   return { label, x, y, box, size, lineX, lineY, lineLength, lineRotate };
+}
+
+function detailCallouts(labels) {
+  const positions = [
+    ["12%", "170px", "170px", "16px"],
+    ["58%", "230px", "180px", "16px"],
+    ["7%", "320px", "150px", "16px"],
+    ["64%", "640px", "160px", "16px"],
+    ["18%", "735px", "170px", "16px"],
+    ["50%", "780px", "190px", "16px"]
+  ];
+
+  return labels.map((label, index) => {
+    const [x, y, box, size] = positions[index % positions.length];
+    return callout(label, x, y, box, size);
+  });
+}
+
+function getActiveItems() {
+  return activeCategory === "breakfasts" ? breakfastItems : menuItems;
+}
+
+function getActiveTitle() {
+  return activeCategory === "breakfasts" ? "ЗАВТРАКИ" : "ТОСТЫ";
 }
 
 function renderToasts() {
@@ -186,10 +245,16 @@ function renderBreakfasts() {
     ${breakfastItems
     .map(
       (item) => `
-        <article class="breakfast-item" style="--image-width: ${item.imageWidth};">
+        <button
+          class="breakfast-item"
+          type="button"
+          data-id="${item.id}"
+          style="--image-width: ${item.imageWidth};"
+          aria-label="${item.title}"
+        >
           <img src="${item.image}" alt="" />
           <span>${item.shortName}</span>
-        </article>
+        </button>
       `
     )
     .join("")}
@@ -339,7 +404,7 @@ function prepareMenuParting(sourceButton) {
   const posterCenterX = posterRect.left + posterRect.width / 2;
   const posterCenterY = posterRect.top + posterRect.height / 2;
 
-  menuView.querySelectorAll(".menu-item").forEach((menuItem) => {
+  menuView.querySelectorAll(".menu-item, .breakfast-item").forEach((menuItem) => {
     if (menuItem === sourceButton) return;
 
     const rect = menuItem.getBoundingClientRect();
@@ -356,7 +421,7 @@ function prepareMenuParting(sourceButton) {
 }
 
 function resetMenuParting() {
-  menuView.querySelectorAll(".menu-item").forEach((menuItem) => {
+  menuView.querySelectorAll(".menu-item, .breakfast-item").forEach((menuItem) => {
     menuItem.classList.remove("is-parting");
     menuItem.style.removeProperty("--part-x");
     menuItem.style.removeProperty("--part-y");
@@ -365,6 +430,7 @@ function resetMenuParting() {
 
 function openToasts() {
   window.clearTimeout(zoomTimer);
+  activeCategory = "toasts";
   renderToasts();
   poster.classList.remove("is-home", "is-breakfasts", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-toasts");
@@ -373,12 +439,13 @@ function openToasts() {
   detailView.setAttribute("aria-hidden", "true");
   posterTitle.textContent = "ТОСТЫ";
   resetMenuParting();
-  document.querySelectorAll(".menu-item.is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  document.querySelectorAll(".is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
   poster.scrollIntoView({ block: "start" });
 }
 
 function openBreakfasts() {
   window.clearTimeout(zoomTimer);
+  activeCategory = "breakfasts";
   renderBreakfasts();
   poster.classList.remove("is-home", "is-toasts", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-breakfasts");
@@ -387,24 +454,25 @@ function openBreakfasts() {
   detailView.setAttribute("aria-hidden", "true");
   posterTitle.textContent = "ЗАВТРАКИ";
   resetMenuParting();
-  document.querySelectorAll(".menu-item.is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  document.querySelectorAll(".is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
   poster.scrollIntoView({ block: "start" });
 }
 
 function openHome() {
   window.clearTimeout(zoomTimer);
+  activeCategory = "home";
   poster.classList.remove("is-toasts", "is-breakfasts", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-home");
   detailView.style.transition = "";
   detailView.style.transform = "";
   detailView.setAttribute("aria-hidden", "true");
   resetMenuParting();
-  document.querySelectorAll(".menu-item.is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  document.querySelectorAll(".is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
   poster.scrollIntoView({ block: "start" });
 }
 
 function openDetail(id, sourceButton) {
-  const item = menuItems.find((menuItem) => menuItem.id === id);
+  const item = getActiveItems().find((menuItem) => menuItem.id === id);
   if (!item) return;
   window.clearTimeout(zoomTimer);
 
@@ -450,7 +518,8 @@ function openDetail(id, sourceButton) {
   resetMenuParting();
   prepareMenuParting(sourceButton);
   poster.classList.remove("is-home");
-  poster.classList.add("is-toasts");
+  poster.classList.toggle("is-toasts", activeCategory === "toasts");
+  poster.classList.toggle("is-breakfasts", activeCategory === "breakfasts");
   poster.classList.add("is-detail");
   poster.classList.add("is-animating");
   detailView.setAttribute("aria-hidden", "false");
@@ -506,10 +575,10 @@ function closeDetail() {
   poster.classList.remove("is-callout-ready");
   detailView.style.transition = "";
   detailView.style.transform = "";
-  document.querySelectorAll(".menu-item.is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  document.querySelectorAll(".is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
   resetMenuParting();
   detailView.setAttribute("aria-hidden", "true");
-  posterTitle.textContent = "ТОСТЫ";
+  posterTitle.textContent = getActiveTitle();
   poster.scrollIntoView({ block: "start" });
 }
 
@@ -521,7 +590,7 @@ mainView.addEventListener("click", (event) => {
 });
 
 menuView.addEventListener("click", (event) => {
-  const itemButton = event.target.closest(".menu-item");
+  const itemButton = event.target.closest(".menu-item, .breakfast-item");
   if (itemButton) openDetail(itemButton.dataset.id, itemButton);
 });
 
