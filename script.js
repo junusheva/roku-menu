@@ -174,6 +174,122 @@ const breakfastItems = [
   }
 ];
 
+const eveningItems = [
+  {
+    id: "evening-karaage-aioli",
+    name: "Карааге с айоли",
+    shortName: "карааге с<br>айоли",
+    title: "КАРААГЕ С АЙОЛИ",
+    price: "380с",
+    image: "assets/evening-karaage-aioli.png",
+    imageWidth: "220px",
+    description: "курица в двойной панировке, посыпается пармезаном и цедрой лайма, подаются с соусом айоли",
+    ingredients: detailCallouts(["курица в двойной<br>панировке", "пармезан", "цедра лайма", "соус айоли"])
+  },
+  {
+    id: "evening-karaage-gochujang",
+    name: "Карааге с карамельным кочуджаном",
+    shortName: "карааге с<br>карамельным<br>кочуджаном",
+    title: "КАРААГЕ",
+    price: "380с",
+    image: "assets/evening-karaage-gochujang.png",
+    imageWidth: "215px",
+    description:
+      "курица в двойной панировке в сладко-остром соусе, посыпается арахисом и сычуанским перцем, продается с греческим йогуртом",
+    ingredients: detailCallouts([
+      "курица в двойной<br>панировке",
+      "сладко-острый соус",
+      "арахис",
+      "сычуанский перец",
+      "греческий йогурт"
+    ])
+  },
+  {
+    id: "evening-curry-katsu",
+    name: "Карри Кацу",
+    shortName: "карри кацу",
+    title: "КАРРИ КАЦУ",
+    price: "600с",
+    image: "assets/evening-curry-katsu.png",
+    imageWidth: "205px",
+    description: "курица в панировке, рис, соус карри, маринованные огурчики",
+    ingredients: detailCallouts(["курица в панировке", "рис", "соус карри", "маринованные<br>огурчики"])
+  },
+  {
+    id: "evening-donburi-trout",
+    name: "Донбури с форелью",
+    shortName: "донбури с<br>форелью",
+    title: "ДОНБУРИ С ФОРЕЛЬЮ",
+    price: "660с",
+    image: "assets/evening-donburi-trout.png",
+    imageWidth: "190px",
+    description: "запеченная форель, рис, мисо соус, жареный нори, капуста пак-чой, маринованная редька дайкон",
+    ingredients: detailCallouts([
+      "запеченная форель",
+      "рис",
+      "мисо соус",
+      "жареный нори",
+      "капуста пак-чой",
+      "маринованная<br>редька дайкон"
+    ])
+  },
+  {
+    id: "evening-chicken-salad",
+    name: "Чикен салат",
+    shortName: "чикен салат",
+    title: "ЧИКЕН САЛАТ",
+    price: "350с",
+    image: "assets/breakfast-chicken-salad.png",
+    imageWidth: "165px",
+    description: "курица в панировке, салат айсберг, соус айоли, лимон, посыпается пармезаном и домашними чипсами",
+    ingredients: detailCallouts(["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"])
+  },
+  {
+    id: "evening-green-salad",
+    name: "Зеленый салат",
+    shortName: "зеленый салат",
+    title: "ЗЕЛЕНЫЙ САЛАТ",
+    price: "390с",
+    image: "assets/breakfast-green-salad.png",
+    imageWidth: "205px",
+    description: "авокадо, брокколи, стручковая фасоль, салат айсберг, шпинат, ореховый соус, посыпается жареным нори",
+    ingredients: detailCallouts(["авокадо", "брокколи", "стручковая фасоль", "салат айсберг", "шпинат", "ореховый соус", "жареный нори"])
+  },
+  {
+    id: "evening-pickles",
+    name: "Маринованные огурцы",
+    shortName: "маринованные<br>огурцы",
+    title: "МАРИНОВАННЫЕ ОГУРЦЫ",
+    price: "170с",
+    image: "assets/evening-pickles.png",
+    imageWidth: "185px",
+    description: "маринованные огурцы, посыпается арахисом и кинзой",
+    ingredients: detailCallouts(["маринованные<br>огурцы", "арахис", "кинза"])
+  },
+  {
+    id: "evening-corn-ribs",
+    name: "Корн рибс",
+    shortName: "корн рибс",
+    title: "КОРН РИБС",
+    price: "280с",
+    image: "assets/evening-corn-ribs.png",
+    imageWidth: "205px",
+    description: "обжаренная кукуруза, мисо масло, жареный нори, пармезан",
+    ingredients: detailCallouts(["обжаренная кукуруза", "мисо масло", "жареный нори", "пармезан"])
+  },
+  {
+    id: "evening-chips-kurut",
+    name: "Чипсы с копченым курутом",
+    shortName: "чипсы с<br>копченым<br>курутом",
+    title: "ЧИПСЫ С КУРУТОМ",
+    price: "120с",
+    image: "assets/evening-chips-kurut.png",
+    imageWidth: "220px",
+    description: "Домашние чипсы, посыпается копченым курутом и подается с соусом айоли",
+    ingredients: detailCallouts(["домашние чипсы", "копченый курут", "соус айоли"])
+  }
+];
+
 const poster = document.querySelector("#menu");
 const posterTitle = document.querySelector("#posterTitle");
 const mainView = document.querySelector("#mainView");
@@ -196,7 +312,9 @@ function detailCallouts(labels) {
     ["7%", "320px", "150px", "16px"],
     ["64%", "640px", "160px", "16px"],
     ["18%", "735px", "170px", "16px"],
-    ["50%", "780px", "190px", "16px"]
+    ["50%", "780px", "190px", "16px"],
+    ["32%", "710px", "180px", "16px"],
+    ["69%", "350px", "150px", "16px"]
   ];
 
   return labels.map((label, index) => {
@@ -206,11 +324,15 @@ function detailCallouts(labels) {
 }
 
 function getActiveItems() {
-  return activeCategory === "breakfasts" ? breakfastItems : menuItems;
+  if (activeCategory === "breakfasts") return breakfastItems;
+  if (activeCategory === "evening") return eveningItems;
+  return menuItems;
 }
 
 function getActiveTitle() {
-  return activeCategory === "breakfasts" ? "ЗАВТРАКИ" : "ТОСТЫ";
+  if (activeCategory === "breakfasts") return "ЗАВТРАКИ";
+  if (activeCategory === "evening") return "ВЕЧЕРНЕЕ МЕНЮ";
+  return "ТОСТЫ";
 }
 
 function renderToasts() {
@@ -261,6 +383,30 @@ function renderBreakfasts() {
     </div>
   `;
   menuView.setAttribute("aria-label", "Меню завтраков");
+}
+
+function renderEvening() {
+  menuView.innerHTML = `
+    <div class="breakfast-board">
+    ${eveningItems
+    .map(
+      (item) => `
+        <button
+          class="breakfast-item"
+          type="button"
+          data-id="${item.id}"
+          style="--image-width: ${item.imageWidth};"
+          aria-label="${item.title}"
+        >
+          <img src="${item.image}" alt="" />
+          <span>${item.shortName}</span>
+        </button>
+      `
+    )
+    .join("")}
+    </div>
+  `;
+  menuView.setAttribute("aria-label", "Вечернее меню");
 }
 
 function clamp(value, min, max) {
@@ -432,7 +578,7 @@ function openToasts() {
   window.clearTimeout(zoomTimer);
   activeCategory = "toasts";
   renderToasts();
-  poster.classList.remove("is-home", "is-breakfasts", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.remove("is-home", "is-breakfasts", "is-evening", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-toasts");
   detailView.style.transition = "";
   detailView.style.transform = "";
@@ -447,7 +593,7 @@ function openBreakfasts() {
   window.clearTimeout(zoomTimer);
   activeCategory = "breakfasts";
   renderBreakfasts();
-  poster.classList.remove("is-home", "is-toasts", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.remove("is-home", "is-toasts", "is-evening", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-breakfasts");
   detailView.style.transition = "";
   detailView.style.transform = "";
@@ -458,10 +604,25 @@ function openBreakfasts() {
   poster.scrollIntoView({ block: "start" });
 }
 
+function openEvening() {
+  window.clearTimeout(zoomTimer);
+  activeCategory = "evening";
+  renderEvening();
+  poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.add("is-evening");
+  detailView.style.transition = "";
+  detailView.style.transform = "";
+  detailView.setAttribute("aria-hidden", "true");
+  posterTitle.textContent = "ВЕЧЕРНЕЕ МЕНЮ";
+  resetMenuParting();
+  document.querySelectorAll(".is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  poster.scrollIntoView({ block: "start" });
+}
+
 function openHome() {
   window.clearTimeout(zoomTimer);
   activeCategory = "home";
-  poster.classList.remove("is-toasts", "is-breakfasts", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.remove("is-toasts", "is-breakfasts", "is-evening", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-home");
   detailView.style.transition = "";
   detailView.style.transform = "";
@@ -520,6 +681,7 @@ function openDetail(id, sourceButton) {
   poster.classList.remove("is-home");
   poster.classList.toggle("is-toasts", activeCategory === "toasts");
   poster.classList.toggle("is-breakfasts", activeCategory === "breakfasts");
+  poster.classList.toggle("is-evening", activeCategory === "evening");
   poster.classList.add("is-detail");
   poster.classList.add("is-animating");
   detailView.setAttribute("aria-hidden", "false");
@@ -587,6 +749,7 @@ mainView.addEventListener("click", (event) => {
   if (!categoryButton) return;
   if (categoryButton.dataset.category === "toasts") openToasts();
   if (categoryButton.dataset.category === "breakfasts") openBreakfasts();
+  if (categoryButton.dataset.category === "evening") openEvening();
 });
 
 menuView.addEventListener("click", (event) => {
@@ -608,7 +771,7 @@ document.addEventListener("keydown", (event) => {
       closeDetail();
       return;
     }
-    if (poster.classList.contains("is-toasts") || poster.classList.contains("is-breakfasts")) openHome();
+    if (poster.classList.contains("is-toasts") || poster.classList.contains("is-breakfasts") || poster.classList.contains("is-evening")) openHome();
   }
 });
 
