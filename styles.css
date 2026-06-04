@@ -360,8 +360,8 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: max-content;
-  max-width: calc(100% - 20px);
+  width: fit-content;
+  max-width: min(var(--box), calc(100% - 20px));
   padding: 7px 10px;
   border: 1px solid rgba(255, 255, 255, 0);
   border-radius: 28px;
@@ -371,8 +371,10 @@ h1 {
   font-weight: 500;
   isolation: isolate;
   line-height: 1;
+  overflow-wrap: break-word;
   text-align: center;
-  white-space: nowrap;
+  text-wrap: balance;
+  white-space: normal;
   opacity: 0;
   transform: translate(var(--pop-x, 0px), var(--pop-y, 42px)) scale(0.76);
   transition: opacity 260ms ease, transform 420ms cubic-bezier(0.18, 0.84, 0.28, 1);
