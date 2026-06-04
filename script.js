@@ -428,12 +428,22 @@ function overlapArea(a, b) {
   return (Math.min(a.right, b.right) - Math.max(a.left, b.left)) * (Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
 }
 
+function expandBox(box, gap) {
+  return {
+    left: box.left - gap,
+    right: box.right + gap,
+    top: box.top - gap,
+    bottom: box.bottom + gap
+  };
+}
+
 function fitCalloutsToPoster() {
   const posterRect = poster.getBoundingClientRect();
   const imageRect = detailImage.getBoundingClientRect();
   const padding = 8;
   const imageGap = 42;
   const labelGap = 12;
+  const occupiedBoxes = [];
   const posterBox = {
     width: posterRect.width,
     height: posterRect.height
@@ -456,8 +466,7 @@ function fitCalloutsToPoster() {
     const maxTop = posterBox.height - height - padding;
     const baseLeft = clamp(desiredLeft, minLeft, maxLeft);
     const baseTop = clamp(desiredTop, minTop, maxTop);
-    const candidates = [
-      [baseLeft, baseTop],
+    const anchors = [
       [safeImage.left - width - labelGap, baseTop],
       [safeImage.right + labelGap, baseTop],
       [baseLeft, safeImage.top - height - labelGap],
@@ -467,21 +476,46 @@ function fitCalloutsToPoster() {
       [safeImage.left - width - labelGap, safeImage.bottom + labelGap],
       [safeImage.right + labelGap, safeImage.bottom + labelGap]
     ];
+    const nudges = [
+      [0, 0],
+      [0, -(height + labelGap)],
+      [0, height + labelGap],
+      [-(width + labelGap), 0],
+      [width + labelGap, 0],
+      [-(width / 2 + labelGap), -(height + labelGap)],
+      [width / 2 + labelGap, -(height + labelGap)],
+      [-(width / 2 + labelGap), height + labelGap],
+      [width / 2 + labelGap, height + labelGap]
+    ];
+    const candidates = [[baseLeft, baseTop]];
+
+    anchors.forEach((anchor) => {
+      nudges.forEach(([nudgeX, nudgeY]) => {
+        candidates.push([anchor[0] + nudgeX, anchor[1] + nudgeY]);
+      });
+    });
+
     let best = { left: baseLeft, top: baseTop, score: Number.POSITIVE_INFINITY };
 
     candidates.forEach(([candidateLeft, candidateTop]) => {
       const left = clamp(candidateLeft, minLeft, maxLeft);
       const top = clamp(candidateTop, minTop, maxTop);
       const box = { left, top, right: left + width, bottom: top + height };
+      const spacedBox = expandBox(box, labelGap);
       const distance = Math.hypot(left - desiredLeft, top - desiredTop);
       const collisionPenalty = overlapArea(box, safeImage) * 1000;
-      const score = distance + collisionPenalty;
+      const labelCollisionPenalty = occupiedBoxes.reduce(
+        (penalty, occupiedBox) => penalty + overlapArea(spacedBox, occupiedBox) * 2000,
+        0
+      );
+      const score = distance + collisionPenalty + labelCollisionPenalty;
 
       if (score < best.score) best = { left, top, score };
     });
 
     calloutElement.style.left = `${best.left}px`;
     calloutElement.style.top = `${best.top}px`;
+    occupiedBoxes.push(expandBox({ left: best.left, top: best.top, right: best.left + width, bottom: best.top + height }, labelGap));
   });
 }
 
