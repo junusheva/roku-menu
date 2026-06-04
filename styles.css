@@ -366,7 +366,8 @@ h1 {
   border: 1px solid rgba(255, 255, 255, 0);
   border-radius: 28px;
   background:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.94) 0 48%, rgba(246, 244, 245, 0.72) 72%, rgba(246, 244, 245, 0) 100%);
+    radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.96) 0 42%, rgba(246, 244, 245, 0.7) 68%, rgba(246, 244, 245, 0) 100%);
+  box-shadow: 0 0 16px 8px rgba(255, 255, 255, 0.58);
   color: var(--ink);
   font-size: clamp(14px, var(--size), 20px);
   font-weight: 500;
