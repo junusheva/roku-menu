@@ -362,7 +362,11 @@ h1 {
   justify-content: center;
   width: max-content;
   max-width: calc(100% - 20px);
-  padding: 5px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.94) 0 48%, rgba(246, 244, 245, 0.72) 72%, rgba(246, 244, 245, 0) 100%);
   color: var(--ink);
   font-size: clamp(14px, var(--size), 20px);
   font-weight: 500;
