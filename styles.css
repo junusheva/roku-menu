@@ -390,7 +390,6 @@ h1 {
   color: var(--ink);
   font-size: clamp(14px, var(--size), 20px);
   font-weight: 500;
-  isolation: isolate;
   line-height: 1;
   overflow-wrap: break-word;
   text-align: center;
@@ -400,18 +399,6 @@ h1 {
   transform: translate(var(--pop-x, 0px), var(--pop-y, 42px)) scale(0.76);
   transition: opacity 260ms ease, transform 420ms cubic-bezier(0.18, 0.84, 0.28, 1);
   transition-delay: var(--delay);
-}
-
-.callout::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: -10px -16px;
-  border-radius: 999px;
-  background:
-    radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.98) 0 42%, rgba(255, 255, 255, 0.72) 58%, rgba(246, 244, 245, 0.26) 76%, rgba(246, 244, 245, 0) 100%);
-  filter: blur(7px);
-  pointer-events: none;
 }
 
 .callout-ray {
