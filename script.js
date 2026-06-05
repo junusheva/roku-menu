@@ -466,7 +466,9 @@ function getRadialCandidates(angle, step, centerX, centerY, radiusX, radiusY, wi
 function fitCalloutsToPoster() {
   const posterRect = poster.getBoundingClientRect();
   const imageRect = detailImage.getBoundingClientRect();
+  const titleRect = posterTitle.getBoundingClientRect();
   const padding = 8;
+  const headerGap = 18;
   const imageGap = 42;
   const labelGap = 12;
   const occupiedBoxes = [];
@@ -477,6 +479,7 @@ function fitCalloutsToPoster() {
   };
   const centerX = imageRect.left - posterRect.left + imageRect.width / 2;
   const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
+  const headerBottom = titleRect.bottom - posterRect.top + headerGap;
   const angleStep = (Math.PI * 2) / Math.max(calloutElements.length, 1);
   const safeImage = {
     left: imageRect.left - posterRect.left - imageGap,
@@ -490,7 +493,7 @@ function fitCalloutsToPoster() {
     const height = calloutElement.offsetHeight;
     const minLeft = padding;
     const maxLeft = posterBox.width - width - padding;
-    const minTop = padding;
+    const minTop = Math.max(padding, headerBottom);
     const maxTop = posterBox.height - height - padding;
     const angle = getEvenCalloutAngle(index, calloutElements.length);
     const radiusX = Math.max(imageRect.width / 2 + width / 2 + 54, posterBox.width * 0.34);
