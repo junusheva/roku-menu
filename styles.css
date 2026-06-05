@@ -220,7 +220,7 @@ h1 {
 .menu-item-content > span {
   display: grid;
   justify-self: center;
-  font-size: clamp(14px, 3.7vw, 18px);
+  font-size: 12px;
   font-weight: 500;
   line-height: 1;
   text-align: center;
@@ -285,7 +285,7 @@ h1 {
 .breakfast-item > span {
   display: block;
   max-width: min(100%, 180px);
-  font-size: clamp(14px, 3.8vw, 18px);
+  font-size: 12px;
   font-weight: 500;
   line-height: 1;
   text-align: center;
