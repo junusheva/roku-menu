@@ -6,12 +6,12 @@ const menuItems = [
     image: "assets/tuna-hq.png",
     labelOffset: "-18px",
     ingredients: [
-      callout("яйца", "18%", "165px", "110px", "18px", "135px", "28px", "72px", "66deg"),
-      callout("греческий йогурт", "56%", "205px", "190px", "16px", "18px", "30px", "78px", "106deg"),
-      callout("кукуруза", "7%", "305px", "120px", "16px", "68px", "28px", "94px", "52deg"),
-      callout("консервированный тунец", "55%", "640px", "210px", "16px", "25px", "-48px", "86px", "-128deg"),
-      callout("сыр Чеддер", "14%", "735px", "118px", "16px", "58px", "-92px", "132px", "-76deg"),
-      callout("красный лук", "51%", "790px", "140px", "16px", "72px", "-104px", "150px", "-92deg")
+      callout("яйца", "110px", "18px"),
+      callout("греческий йогурт", "190px"),
+      callout("кукуруза", "120px"),
+      callout("консервированный тунец", "210px"),
+      callout("сыр Чеддер", "118px"),
+      callout("красный лук", "140px")
     ]
   },
   {
@@ -20,10 +20,10 @@ const menuItems = [
     title: "ЯИЧНЫЙ",
     image: "assets/egg-hq.png",
     ingredients: [
-      callout("яйца", "15%", "180px", "110px", "18px", "106px", "36px", "92px", "66deg"),
-      callout("карамелизированный лук", "55%", "245px", "190px", "14px", "24px", "30px", "78px", "112deg"),
-      callout("соус айоли", "7%", "345px", "130px", "16px", "96px", "36px", "82px", "44deg"),
-      callout("сыр Чеддер", "64%", "655px", "130px", "16px", "18px", "-50px", "94px", "-128deg")
+      callout("яйца", "110px", "18px"),
+      callout("карамелизированный лук", "190px", "14px"),
+      callout("соус айоли", "130px"),
+      callout("сыр Чеддер", "130px")
     ]
   },
   {
@@ -32,10 +32,10 @@ const menuItems = [
     title: "ЧИКЕН",
     image: "assets/chicken-hq.png",
     ingredients: [
-      callout("курица в панировке<br> в сладко-остром соусе", "5%", "165px", "210px", "13px", "106px", "34px", "92px", "66deg"),
-      callout("сыр Чеддер", "64%", "235px", "130px", "16px", "22px", "30px", "82px", "108deg"),
-      callout("нори", "10%", "335px", "86px", "16px", "70px", "28px", "92px", "48deg"),
-      callout("соус айоли", "60%", "675px", "130px", "16px", "20px", "-48px", "92px", "-128deg")
+      callout("курица в панировке<br> в сладко-остром соусе", "210px", "13px"),
+      callout("сыр Чеддер", "130px"),
+      callout("нори", "86px"),
+      callout("соус айоли", "130px")
     ]
   },
   {
@@ -44,11 +44,11 @@ const menuItems = [
     title: "ФОРЕЛЬ",
     image: "assets/trout-hq.png",
     ingredients: [
-      callout("малосольная форель", "10%", "170px", "160px", "16px", "102px", "34px", "92px", "65deg"),
-      callout("гуакамоле", "64%", "230px", "120px", "18px", "30px", "30px", "82px", "106deg"),
-      callout("соус алоэ-трюфель", "5%", "320px", "170px", "16px", "75px", "30px", "94px", "47deg"),
-      callout("яйца", "69%", "650px", "110px", "16px", "18px", "-48px", "92px", "-128deg"),
-      callout("соус васаби-юдзу", "18%", "735px", "170px", "16px", "78px", "-90px", "132px", "-74deg")
+      callout("малосольная форель", "160px"),
+      callout("гуакамоле", "120px", "18px"),
+      callout("соус алоэ-трюфель", "170px"),
+      callout("яйца", "110px"),
+      callout("соус васаби-юдзу", "170px")
     ]
   },
   {
@@ -57,11 +57,11 @@ const menuItems = [
     title: "ГОВЯДИНА",
     image: "assets/beef-hq.png",
     ingredients: [
-      callout("сыр Чеддер", "16%", "165px", "130px", "18px", "112px", "35px", "92px", "66deg"),
-      callout("бон филе", "68%", "235px", "132px", "18px", "24px", "28px", "82px", "108deg"),
-      callout("карамелизированный лук", "4%", "312px", "188px", "14px", "112px", "28px", "78px", "40deg"),
-      callout("яйца", "68%", "654px", "120px", "18px", "18px", "-48px", "92px", "-128deg"),
-      callout("соус кочуджан-мэйо", "16%", "740px", "170px", "16px", "74px", "-92px", "132px", "-76deg")
+      callout("сыр Чеддер", "130px", "18px"),
+      callout("бон филе", "132px", "18px"),
+      callout("карамелизированный лук", "188px", "14px"),
+      callout("яйца", "120px", "18px"),
+      callout("соус кочуджан-мэйо", "170px")
     ]
   },
   {
@@ -70,11 +70,11 @@ const menuItems = [
     title: "КРЕВЕТКА",
     image: "assets/shrimp-hq.png",
     ingredients: [
-      callout("обжаренные креветки", "9%", "165px", "165px", "16px", "112px", "34px", "92px", "66deg"),
-      callout("гуакамоле", "65%", "225px", "120px", "18px", "36px", "34px", "80px", "104deg"),
-      callout("соус васаби-юдзу", "6%", "320px", "165px", "16px", "62px", "28px", "96px", "48deg"),
-      callout("соус алоэ-трюфель", "61%", "650px", "160px", "16px", "18px", "-48px", "92px", "-128deg"),
-      callout("яйца", "20%", "740px", "100px", "18px", "74px", "-92px", "132px", "-76deg")
+      callout("обжаренные креветки", "165px"),
+      callout("гуакамоле", "120px", "18px"),
+      callout("соус васаби-юдзу", "165px"),
+      callout("соус алоэ-трюфель", "160px"),
+      callout("яйца", "100px", "18px")
     ]
   }
 ];
@@ -302,26 +302,25 @@ const logoButton = document.querySelector("#logoButton");
 let zoomTimer;
 let activeCategory = "home";
 
-function callout(label, x, y, box, size, lineX, lineY, lineLength, lineRotate) {
-  return { label, x, y, box, size, lineX, lineY, lineLength, lineRotate };
+function getAutoCalloutBox(label) {
+  const plainLabel = label.replace(/<br\s*\/?>/gi, " ");
+  if (plainLabel.length > 24) return "210px";
+  if (plainLabel.length > 18) return "180px";
+  if (plainLabel.length > 12) return "160px";
+  return "130px";
+}
+
+function getAutoCalloutSize(label) {
+  const plainLabel = label.replace(/<br\s*\/?>/gi, " ");
+  return plainLabel.length > 28 ? "14px" : "16px";
+}
+
+function callout(label, box = getAutoCalloutBox(label), size = getAutoCalloutSize(label)) {
+  return { label, box, size };
 }
 
 function detailCallouts(labels) {
-  const positions = [
-    ["12%", "170px", "170px", "16px"],
-    ["58%", "230px", "180px", "16px"],
-    ["7%", "320px", "150px", "16px"],
-    ["64%", "640px", "160px", "16px"],
-    ["18%", "735px", "170px", "16px"],
-    ["50%", "780px", "190px", "16px"],
-    ["32%", "710px", "180px", "16px"],
-    ["69%", "350px", "150px", "16px"]
-  ];
-
-  return labels.map((label, index) => {
-    const [x, y, box, size] = positions[index % positions.length];
-    return callout(label, x, y, box, size);
-  });
+  return labels.map((label) => callout(label));
 }
 
 function getActiveItems() {
@@ -415,11 +414,6 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function coordToPixels(value, basis) {
-  if (value.endsWith("%")) return (parseFloat(value) / 100) * basis;
-  return parseFloat(value) || 0;
-}
-
 function boxesOverlap(a, b) {
   return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
 }
@@ -438,6 +432,37 @@ function expandBox(box, gap) {
   };
 }
 
+function getEvenCalloutAngle(index, total) {
+  const step = (Math.PI * 2) / Math.max(total, 1);
+  return -Math.PI / 2 + index * step;
+}
+
+function getRadialCandidates(angle, step, centerX, centerY, radiusX, radiusY, width, height) {
+  const angleNudges = [0, -step * 0.32, step * 0.32, -step * 0.62, step * 0.62];
+  const radiusScales = [1, 1.12, 0.88, 1.25, 0.76];
+  const candidates = [];
+  const addCandidate = (candidateAngle, radiusScale) => {
+    const labelCenterX = centerX + Math.cos(candidateAngle) * radiusX * radiusScale;
+    const labelCenterY = centerY + Math.sin(candidateAngle) * radiusY * radiusScale;
+    candidates.push([labelCenterX - width / 2, labelCenterY - height / 2]);
+  };
+
+  angleNudges.forEach((angleNudge) => {
+    radiusScales.forEach((radiusScale) => {
+      addCandidate(angle + angleNudge, radiusScale);
+    });
+  });
+
+  const fallbackSlots = Math.max(Math.round((Math.PI * 2) / step) * 3, 18);
+  for (let slot = 0; slot < fallbackSlots; slot += 1) {
+    const fallbackAngle = -Math.PI / 2 + (slot / fallbackSlots) * Math.PI * 2;
+    addCandidate(fallbackAngle, 1);
+    addCandidate(fallbackAngle, 1.22);
+  }
+
+  return candidates;
+}
+
 function fitCalloutsToPoster() {
   const posterRect = poster.getBoundingClientRect();
   const imageRect = detailImage.getBoundingClientRect();
@@ -445,10 +470,14 @@ function fitCalloutsToPoster() {
   const imageGap = 42;
   const labelGap = 12;
   const occupiedBoxes = [];
+  const calloutElements = [...callouts.querySelectorAll(".callout")];
   const posterBox = {
     width: posterRect.width,
     height: posterRect.height
   };
+  const centerX = imageRect.left - posterRect.left + imageRect.width / 2;
+  const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
+  const angleStep = (Math.PI * 2) / Math.max(calloutElements.length, 1);
   const safeImage = {
     left: imageRect.left - posterRect.left - imageGap,
     right: imageRect.right - posterRect.left + imageGap,
@@ -456,47 +485,20 @@ function fitCalloutsToPoster() {
     bottom: imageRect.bottom - posterRect.top + imageGap
   };
 
-  callouts.querySelectorAll(".callout").forEach((calloutElement) => {
-    const desiredLeft = coordToPixels(calloutElement.dataset.x || "0px", posterBox.width);
-    const desiredTop = coordToPixels(calloutElement.dataset.y || "0px", posterBox.height);
+  calloutElements.forEach((calloutElement, index) => {
     const width = calloutElement.offsetWidth;
     const height = calloutElement.offsetHeight;
     const minLeft = padding;
     const maxLeft = posterBox.width - width - padding;
     const minTop = padding;
     const maxTop = posterBox.height - height - padding;
-    const baseLeft = clamp(desiredLeft, minLeft, maxLeft);
-    const baseTop = clamp(desiredTop, minTop, maxTop);
-    const anchors = [
-      [safeImage.left - width - labelGap, baseTop],
-      [safeImage.right + labelGap, baseTop],
-      [baseLeft, safeImage.top - height - labelGap],
-      [baseLeft, safeImage.bottom + labelGap],
-      [safeImage.left - width - labelGap, safeImage.top - height - labelGap],
-      [safeImage.right + labelGap, safeImage.top - height - labelGap],
-      [safeImage.left - width - labelGap, safeImage.bottom + labelGap],
-      [safeImage.right + labelGap, safeImage.bottom + labelGap]
-    ];
-    const nudges = [
-      [0, 0],
-      [0, -(height + labelGap)],
-      [0, height + labelGap],
-      [-(width + labelGap), 0],
-      [width + labelGap, 0],
-      [-(width / 2 + labelGap), -(height + labelGap)],
-      [width / 2 + labelGap, -(height + labelGap)],
-      [-(width / 2 + labelGap), height + labelGap],
-      [width / 2 + labelGap, height + labelGap]
-    ];
-    const candidates = [[baseLeft, baseTop]];
-
-    anchors.forEach((anchor) => {
-      nudges.forEach(([nudgeX, nudgeY]) => {
-        candidates.push([anchor[0] + nudgeX, anchor[1] + nudgeY]);
-      });
-    });
-
-    let best = { left: baseLeft, top: baseTop, score: Number.POSITIVE_INFINITY };
+    const angle = getEvenCalloutAngle(index, calloutElements.length);
+    const radiusX = Math.max(imageRect.width / 2 + width / 2 + 54, posterBox.width * 0.34);
+    const radiusY = Math.max(imageRect.height / 2 + height / 2 + 92, posterBox.height * 0.24);
+    const desiredLeft = centerX + Math.cos(angle) * radiusX - width / 2;
+    const desiredTop = centerY + Math.sin(angle) * radiusY - height / 2;
+    const candidates = getRadialCandidates(angle, angleStep, centerX, centerY, radiusX, radiusY, width, height);
+    let best = { left: clamp(desiredLeft, minLeft, maxLeft), top: clamp(desiredTop, minTop, maxTop), score: Number.POSITIVE_INFINITY };
 
     candidates.forEach(([candidateLeft, candidateTop]) => {
       const left = clamp(candidateLeft, minLeft, maxLeft);
@@ -696,11 +698,7 @@ function openDetail(id, sourceButton) {
         ></span>
         <div
           class="callout"
-          data-x="${ingredient.x}"
-          data-y="${ingredient.y}"
           style="
-            --x: ${ingredient.x};
-            --y: ${ingredient.y};
             --box: ${ingredient.box};
             --size: ${ingredient.size};
             --delay: ${120 + index * 55}ms;
