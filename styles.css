@@ -12,7 +12,12 @@
 
 @font-face {
   font-family: "Cuphead Memphis";
-  src: local("Cuphead Memphis"), local("CupheadMemphis"), local("CupheadMemphis-Regular");
+  src:
+    url("assets/cupheadmemphis-medium.ttf") format("truetype"),
+    local("Cuphead Memphis"),
+    local("CupheadMemphis"),
+    local("CupheadMemphis-Regular");
+  font-weight: 400 900;
   font-display: swap;
 }
 
