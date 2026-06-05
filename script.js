@@ -468,7 +468,6 @@ function fitCalloutsToPoster() {
   const imageRect = detailImage.getBoundingClientRect();
   const titleRect = posterTitle.getBoundingClientRect();
   const padding = 8;
-  const headerGap = 18;
   const imageGap = 42;
   const labelGap = 12;
   const occupiedBoxes = [];
@@ -479,6 +478,7 @@ function fitCalloutsToPoster() {
   };
   const centerX = imageRect.left - posterRect.left + imageRect.width / 2;
   const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
+  const headerGap = Math.max(44, posterBox.height * 0.045);
   const headerBottom = titleRect.bottom - posterRect.top + headerGap;
   const angleStep = (Math.PI * 2) / Math.max(calloutElements.length, 1);
   const safeImage = {
