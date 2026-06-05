@@ -298,6 +298,7 @@ const detailView = document.querySelector("#detailView");
 const detailImage = document.querySelector("#detailImage");
 const callouts = document.querySelector("#callouts");
 const backButton = document.querySelector("#backButton");
+const logoButton = document.querySelector("#logoButton");
 let zoomTimer;
 let activeCategory = "home";
 
@@ -798,6 +799,8 @@ backButton.addEventListener("click", () => {
   }
   openHome();
 });
+
+logoButton.addEventListener("click", openHome);
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {

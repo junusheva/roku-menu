@@ -67,13 +67,27 @@ button {
   background: transparent;
 }
 
+.logo-button {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
 .logo {
   display: block;
   width: clamp(76px, 19vw, 96px);
   height: auto;
-  margin: 0 auto;
   object-fit: contain;
   transition: opacity 180ms ease;
+}
+
+.logo-button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 8px;
 }
 
 .poster.is-home .logo {
