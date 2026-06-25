@@ -423,6 +423,28 @@ function overlapArea(a, b) {
   return (Math.min(a.right, b.right) - Math.max(a.left, b.left)) * (Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
 }
 
+function lineIntersectsBox(line, box) {
+  const { x1, y1, x2, y2 } = line;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  let min = 0;
+  let max = 1;
+  const edges = [
+    [-dx, x1 - box.left],
+    [dx, box.right - x1],
+    [-dy, y1 - box.top],
+    [dy, box.bottom - y1]
+  ];
+
+  return edges.every(([direction, distance]) => {
+    if (direction === 0) return distance >= 0;
+    const ratio = distance / direction;
+    if (direction < 0) min = Math.max(min, ratio);
+    if (direction > 0) max = Math.min(max, ratio);
+    return min <= max;
+  });
+}
+
 function expandBox(box, gap) {
   return {
     left: box.left - gap,
@@ -463,6 +485,50 @@ function getRadialCandidates(angle, step, centerX, centerY, radiusX, radiusY, wi
   return candidates;
 }
 
+function addEdgeCandidates(candidates, minLeft, maxLeft, minTop, maxTop, safeImage, width, height, gap) {
+  const xs = [minLeft, (minLeft + maxLeft) / 2, maxLeft];
+  const ys = [
+    minTop,
+    Math.max(minTop, safeImage.top - height - gap),
+    Math.min(maxTop, safeImage.bottom + gap),
+    maxTop
+  ];
+
+  xs.forEach((x) => ys.forEach((y) => candidates.push([x, y])));
+  [minTop, maxTop].forEach((y) => {
+    for (let step = 0; step <= 4; step += 1) {
+      candidates.push([minLeft + ((maxLeft - minLeft) * step) / 4, y]);
+    }
+  });
+}
+
+function getRaySegment(box, centerX, centerY, halfImageWidth, halfImageHeight, labelGap) {
+  const labelCenterX = box.left + (box.right - box.left) / 2;
+  const labelCenterY = box.top + (box.bottom - box.top) / 2;
+  const dx = labelCenterX - centerX;
+  const dy = labelCenterY - centerY;
+  const distance = Math.hypot(dx, dy) || 1;
+  const unitX = dx / distance;
+  const unitY = dy / distance;
+  const imageRadius = Math.min(
+    Math.abs(unitX) > 0.01 ? halfImageWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
+    Math.abs(unitY) > 0.01 ? halfImageHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
+  );
+  const halfWidth = (box.right - box.left) / 2;
+  const halfHeight = (box.bottom - box.top) / 2;
+  const labelRadius = Math.min(
+    Math.abs(unitX) > 0.01 ? halfWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
+    Math.abs(unitY) > 0.01 ? halfHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
+  );
+
+  return {
+    x1: centerX + unitX * imageRadius,
+    y1: centerY + unitY * imageRadius,
+    x2: labelCenterX - unitX * (labelRadius + labelGap),
+    y2: labelCenterY - unitY * (labelRadius + labelGap)
+  };
+}
+
 function fitCalloutsToPoster() {
   const posterRect = poster.getBoundingClientRect();
   const imageRect = detailImage.getBoundingClientRect();
@@ -471,6 +537,7 @@ function fitCalloutsToPoster() {
   const imageGap = 42;
   const labelGap = 12;
   const occupiedBoxes = [];
+  const occupiedRays = [];
   const calloutElements = [...callouts.querySelectorAll(".callout")];
   const posterBox = {
     width: posterRect.width,
@@ -481,6 +548,9 @@ function fitCalloutsToPoster() {
   const headerGap = Math.max(44, posterBox.height * 0.045);
   const headerBottom = titleRect.bottom - posterRect.top + headerGap;
   const angleStep = (Math.PI * 2) / Math.max(calloutElements.length, 1);
+  const lineImageGap = 18;
+  const halfImageWidth = imageRect.width / 2 + lineImageGap;
+  const halfImageHeight = imageRect.height / 2 + lineImageGap;
   const safeImage = {
     left: imageRect.left - posterRect.left - imageGap,
     right: imageRect.right - posterRect.left + imageGap,
@@ -501,6 +571,7 @@ function fitCalloutsToPoster() {
     const desiredLeft = centerX + Math.cos(angle) * radiusX - width / 2;
     const desiredTop = centerY + Math.sin(angle) * radiusY - height / 2;
     const candidates = getRadialCandidates(angle, angleStep, centerX, centerY, radiusX, radiusY, width, height);
+    addEdgeCandidates(candidates, minLeft, maxLeft, minTop, maxTop, safeImage, width, height, labelGap);
     let best = { left: clamp(desiredLeft, minLeft, maxLeft), top: clamp(desiredTop, minTop, maxTop), score: Number.POSITIVE_INFINITY };
 
     candidates.forEach(([candidateLeft, candidateTop]) => {
@@ -508,20 +579,26 @@ function fitCalloutsToPoster() {
       const top = clamp(candidateTop, minTop, maxTop);
       const box = { left, top, right: left + width, bottom: top + height };
       const spacedBox = expandBox(box, labelGap);
+      const ray = getRaySegment(box, centerX, centerY, halfImageWidth, halfImageHeight, labelGap);
       const distance = Math.hypot(left - desiredLeft, top - desiredTop);
-      const collisionPenalty = overlapArea(box, safeImage) * 1000;
+      const collisionPenalty = overlapArea(box, safeImage) * 10000;
       const labelCollisionPenalty = occupiedBoxes.reduce(
-        (penalty, occupiedBox) => penalty + overlapArea(spacedBox, occupiedBox) * 2000,
+        (penalty, occupiedBox) => penalty + overlapArea(spacedBox, occupiedBox) * 50000 + (boxesOverlap(spacedBox, occupiedBox) ? 1000000 : 0),
         0
       );
-      const score = distance + collisionPenalty + labelCollisionPenalty;
+      const rayCollisionPenalty =
+        occupiedBoxes.reduce((penalty, occupiedBox) => penalty + (lineIntersectsBox(ray, occupiedBox) ? 500000 : 0), 0) +
+        occupiedRays.reduce((penalty, occupiedRay) => penalty + (lineIntersectsBox(occupiedRay, spacedBox) ? 500000 : 0), 0);
+      const score = distance + collisionPenalty + labelCollisionPenalty + rayCollisionPenalty;
 
       if (score < best.score) best = { left, top, score };
     });
 
     calloutElement.style.left = `${best.left}px`;
     calloutElement.style.top = `${best.top}px`;
-    occupiedBoxes.push(expandBox({ left: best.left, top: best.top, right: best.left + width, bottom: best.top + height }, labelGap));
+    const placedBox = { left: best.left, top: best.top, right: best.left + width, bottom: best.top + height };
+    occupiedBoxes.push(expandBox(placedBox, labelGap));
+    occupiedRays.push(getRaySegment(placedBox, centerX, centerY, halfImageWidth, halfImageHeight, labelGap));
   });
 }
 
