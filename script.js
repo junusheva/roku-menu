@@ -301,6 +301,7 @@ const backButton = document.querySelector("#backButton");
 const logoButton = document.querySelector("#logoButton");
 let zoomTimer;
 let activeCategory = "home";
+let edgeSwipe = null;
 
 function getAutoCalloutBox(label) {
   const plainLabel = label.replace(/<br\s*\/?>/gi, " ");
@@ -857,6 +858,52 @@ function closeDetail() {
   poster.scrollIntoView({ block: "start" });
 }
 
+function goBack() {
+  if (poster.classList.contains("is-detail")) {
+    closeDetail();
+    return;
+  }
+  openHome();
+}
+
+function handleEdgeSwipeStart(event) {
+  if (event.touches.length !== 1) return;
+  const touch = event.touches[0];
+  if (touch.clientX > 36) {
+    edgeSwipe = null;
+    return;
+  }
+
+  edgeSwipe = {
+    startX: touch.clientX,
+    startY: touch.clientY,
+    isHorizontal: false
+  };
+}
+
+function handleEdgeSwipeMove(event) {
+  if (!edgeSwipe || event.touches.length !== 1) return;
+  const touch = event.touches[0];
+  const deltaX = touch.clientX - edgeSwipe.startX;
+  const deltaY = Math.abs(touch.clientY - edgeSwipe.startY);
+
+  if (deltaX > 12 && deltaX > deltaY) {
+    edgeSwipe.isHorizontal = true;
+    event.preventDefault();
+  }
+}
+
+function handleEdgeSwipeEnd(event) {
+  if (!edgeSwipe) return;
+  const touch = event.changedTouches[0];
+  const deltaX = touch.clientX - edgeSwipe.startX;
+  const deltaY = Math.abs(touch.clientY - edgeSwipe.startY);
+  const shouldGoBack = edgeSwipe.isHorizontal && deltaX >= 60 && deltaX > deltaY * 1.4 && deltaY < 90;
+
+  edgeSwipe = null;
+  if (shouldGoBack) goBack();
+}
+
 mainView.addEventListener("click", (event) => {
   const categoryButton = event.target.closest(".main-menu-link");
   if (!categoryButton) return;
@@ -870,15 +917,16 @@ menuView.addEventListener("click", (event) => {
   if (itemButton) openDetail(itemButton.dataset.id, itemButton);
 });
 
-backButton.addEventListener("click", () => {
-  if (poster.classList.contains("is-detail")) {
-    closeDetail();
-    return;
-  }
-  openHome();
-});
+backButton.addEventListener("click", goBack);
 
 logoButton.addEventListener("click", openHome);
+
+document.addEventListener("touchstart", handleEdgeSwipeStart, { passive: true });
+document.addEventListener("touchmove", handleEdgeSwipeMove, { passive: false });
+document.addEventListener("touchend", handleEdgeSwipeEnd);
+document.addEventListener("touchcancel", () => {
+  edgeSwipe = null;
+});
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
