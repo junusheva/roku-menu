@@ -11,7 +11,12 @@ const menuItems = [
       callout("кукуруза", "120px"),
       callout("консервированный тунец", "210px"),
       callout("сыр Чеддер", "118px"),
-      callout("красный лук", "140px")
+      callout("красный лук", "140px", undefined, {
+        offsetY: 16,
+        rayScale: 0.1,
+        rayOffsetX: 20,
+        rayOffsetY: -40
+      })
     ]
   },
   {
@@ -61,7 +66,11 @@ const menuItems = [
       callout("бон филе", "132px", "18px"),
       callout("карамелизированный лук", "188px", "14px"),
       callout("яйца", "120px", "18px"),
-      callout("соус кочуджан-мэйо", "170px")
+      callout("соус кочуджан-мэйо", "170px", undefined, {
+        offsetY: -15,
+        rayScale: 0.5,
+        rayOffsetY: 5
+      })
     ]
   },
   {
@@ -90,14 +99,10 @@ const breakfastItems = [
     imageWidth: "205px",
     description:
       "2 вареных яйца, малосольная форель, сыр Маасдам, мисо масло, маринованный огурчик, ломтик хлеба",
-    ingredients: detailCallouts([
-      "вареные яйца",
-      "малосольная форель",
-      "сыр Маасдам",
-      "мисо масло",
-      "маринованный огурчик",
-      "ломтик хлеба"
-    ])
+    ingredients: detailCallouts(
+      ["вареные яйца", "малосольная форель", "сыр Маасдам", "мисо масло", "маринованный огурчик", "ломтик хлеба"],
+      { 5: { offsetY: 5 } }
+    )
   },
   {
     id: "breakfast-french-omelet",
@@ -148,7 +153,10 @@ const breakfastItems = [
     image: "assets/breakfast-avocado-toast.png",
     imageWidth: "205px",
     description: "творожный крем, зеленый горошек, авокадо, шпинат, соус песто, маринованное яйцо",
-    ingredients: detailCallouts(["творожный крем", "зеленый горошек", "авокадо", "шпинат", "соус песто", "маринованное яйцо"])
+    ingredients: detailCallouts(
+      ["творожный крем", "зеленый горошек", "авокадо", "шпинат", "соус песто", "маринованное яйцо"],
+      { 5: { offsetY: 25, rayLength: 10, rayOffsetX: 30, rayOffsetY: -40 } }
+    )
   },
   {
     id: "breakfast-chicken-salad",
@@ -159,7 +167,13 @@ const breakfastItems = [
     image: "assets/breakfast-chicken-salad.png",
     imageWidth: "165px",
     description: "курица в панировке, салат айсберг, соус айоли, лимон, посыпается пармезаном и домашними чипсами",
-    ingredients: detailCallouts(["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"])
+    ingredients: detailCallouts(
+      ["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"],
+      {
+        4: { rayLength: 50 },
+        5: { offsetY: 45, rayLength: 10, rayOffsetX: 20, rayOffsetY: -30 }
+      }
+    )
   },
   {
     id: "breakfast-green-salad",
@@ -242,7 +256,13 @@ const eveningItems = [
     image: "assets/breakfast-chicken-salad.png",
     imageWidth: "165px",
     description: "курица в панировке, салат айсберг, соус айоли, лимон, посыпается пармезаном и домашними чипсами",
-    ingredients: detailCallouts(["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"])
+    ingredients: detailCallouts(
+      ["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"],
+      {
+        4: { rayLength: 50 },
+        5: { offsetY: 45, rayLength: 10, rayOffsetX: 20, rayOffsetY: -30 }
+      }
+    )
   },
   {
     id: "evening-green-salad",
@@ -253,7 +273,10 @@ const eveningItems = [
     image: "assets/breakfast-green-salad.png",
     imageWidth: "205px",
     description: "авокадо, брокколи, стручковая фасоль, салат айсберг, шпинат, ореховый соус, посыпается жареным нори",
-    ingredients: detailCallouts(["авокадо", "брокколи", "стручковая фасоль", "салат айсберг", "шпинат", "ореховый соус", "жареный нори"])
+    ingredients: detailCallouts(
+      ["авокадо", "брокколи", "стручковая фасоль", "салат айсберг", "шпинат", "ореховый соус", "жареный нори"],
+      { 6: { offsetY: 20, rayLength: 30 } }
+    )
   },
   {
     id: "evening-pickles",
@@ -303,25 +326,62 @@ let zoomTimer;
 let activeCategory = "home";
 let edgeSwipe = null;
 
+function getCalloutLines(label) {
+  return label
+    .replace(/<br\s*\/?>/gi, "\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function wrapCalloutLabel(label) {
+  if (/<br\s*\/?>/i.test(label)) return label;
+
+  const words = label.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2) return label;
+
+  const totalLength = words.reduce((sum, word) => sum + word.length, 0);
+  let bestSplit = 1;
+  let bestBalance = Number.POSITIVE_INFINITY;
+
+  for (let split = 1; split < words.length; split += 1) {
+    const firstLength = words.slice(0, split).join(" ").length;
+    const secondLength = words.slice(split).join(" ").length;
+    const balance = Math.abs(firstLength - secondLength) + Math.max(firstLength, secondLength) / Math.max(totalLength, 1);
+    if (balance < bestBalance) {
+      bestBalance = balance;
+      bestSplit = split;
+    }
+  }
+
+  return `${words.slice(0, bestSplit).join(" ")}<br>${words.slice(bestSplit).join(" ")}`;
+}
+
 function getAutoCalloutBox(label) {
-  const plainLabel = label.replace(/<br\s*\/?>/gi, " ");
-  if (plainLabel.length > 24) return "210px";
-  if (plainLabel.length > 18) return "180px";
-  if (plainLabel.length > 12) return "160px";
+  const longestLine = Math.max(...getCalloutLines(wrapCalloutLabel(label)).map((line) => line.length));
+  if (longestLine > 16) return "170px";
+  if (longestLine > 12) return "150px";
+  if (longestLine > 8) return "130px";
   return "130px";
 }
 
 function getAutoCalloutSize(label) {
-  const plainLabel = label.replace(/<br\s*\/?>/gi, " ");
-  return plainLabel.length > 28 ? "14px" : "16px";
+  const longestLine = Math.max(...getCalloutLines(wrapCalloutLabel(label)).map((line) => line.length));
+  return longestLine > 18 ? "14px" : "16px";
 }
 
-function callout(label, box = getAutoCalloutBox(label), size = getAutoCalloutSize(label)) {
-  return { label, box, size };
+function callout(label, box, size, options = {}) {
+  const wrappedLabel = wrapCalloutLabel(label);
+  return {
+    label: wrappedLabel,
+    box: box ?? getAutoCalloutBox(wrappedLabel),
+    size: size ?? getAutoCalloutSize(wrappedLabel),
+    ...options
+  };
 }
 
-function detailCallouts(labels) {
-  return labels.map((label) => callout(label));
+function detailCallouts(labels, optionsByIndex = {}) {
+  return labels.map((label, index) => callout(label, undefined, undefined, optionsByIndex[index]));
 }
 
 function getActiveItems() {
@@ -446,6 +506,69 @@ function lineIntersectsBox(line, box) {
   });
 }
 
+function getSegmentOrientation(a, b, c) {
+  return Math.sign((b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y));
+}
+
+function pointIsOnSegment(a, b, c) {
+  return (
+    Math.min(a.x, c.x) <= b.x &&
+    b.x <= Math.max(a.x, c.x) &&
+    Math.min(a.y, c.y) <= b.y &&
+    b.y <= Math.max(a.y, c.y)
+  );
+}
+
+function linesIntersect(a, b) {
+  const a1 = { x: a.x1, y: a.y1 };
+  const a2 = { x: a.x2, y: a.y2 };
+  const b1 = { x: b.x1, y: b.y1 };
+  const b2 = { x: b.x2, y: b.y2 };
+  const o1 = getSegmentOrientation(a1, a2, b1);
+  const o2 = getSegmentOrientation(a1, a2, b2);
+  const o3 = getSegmentOrientation(b1, b2, a1);
+  const o4 = getSegmentOrientation(b1, b2, a2);
+
+  if (o1 !== o2 && o3 !== o4) return true;
+  return (
+    (o1 === 0 && pointIsOnSegment(a1, b1, a2)) ||
+    (o2 === 0 && pointIsOnSegment(a1, b2, a2)) ||
+    (o3 === 0 && pointIsOnSegment(b1, a1, b2)) ||
+    (o4 === 0 && pointIsOnSegment(b1, a2, b2))
+  );
+}
+
+function getLineBoxEntryPoint(line, box) {
+  const { x1, y1, x2, y2 } = line;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  let min = 0;
+  let max = 1;
+  const edges = [
+    [-dx, x1 - box.left],
+    [dx, box.right - x1],
+    [-dy, y1 - box.top],
+    [dy, box.bottom - y1]
+  ];
+
+  for (const [direction, distance] of edges) {
+    if (direction === 0) {
+      if (distance < 0) return null;
+      continue;
+    }
+
+    const ratio = distance / direction;
+    if (direction < 0) min = Math.max(min, ratio);
+    if (direction > 0) max = Math.min(max, ratio);
+    if (min > max) return null;
+  }
+
+  return {
+    x: x1 + dx * min,
+    y: y1 + dy * min
+  };
+}
+
 function expandBox(box, gap) {
   return {
     left: box.left - gap,
@@ -455,9 +578,16 @@ function expandBox(box, gap) {
   };
 }
 
-function getEvenCalloutAngle(index, total) {
-  const step = (Math.PI * 2) / Math.max(total, 1);
-  return -Math.PI / 2 + index * step;
+function getBalancedCalloutAngle(index, total) {
+  const upperCount = Math.ceil(total / 2);
+  const isUpper = index < upperCount;
+  const arcIndex = isUpper ? index : index - upperCount;
+  const arcTotal = isUpper ? upperCount : total - upperCount;
+  const arcStart = isUpper ? (-Math.PI * 3) / 4 : Math.PI / 4;
+  const arcEnd = isUpper ? -Math.PI / 4 : (Math.PI * 3) / 4;
+
+  if (arcTotal <= 1) return isUpper ? -Math.PI / 2 : Math.PI / 2;
+  return arcStart + ((arcEnd - arcStart) * arcIndex) / (arcTotal - 1);
 }
 
 function getRadialCandidates(angle, step, centerX, centerY, radiusX, radiusY, width, height) {
@@ -497,8 +627,14 @@ function addEdgeCandidates(candidates, minLeft, maxLeft, minTop, maxTop, safeIma
 
   xs.forEach((x) => ys.forEach((y) => candidates.push([x, y])));
   [minTop, maxTop].forEach((y) => {
-    for (let step = 0; step <= 4; step += 1) {
-      candidates.push([minLeft + ((maxLeft - minLeft) * step) / 4, y]);
+    for (let step = 0; step <= 8; step += 1) {
+      candidates.push([minLeft + ((maxLeft - minLeft) * step) / 8, y]);
+    }
+  });
+
+  [minLeft, maxLeft].forEach((x) => {
+    for (let step = 0; step <= 8; step += 1) {
+      candidates.push([x, minTop + ((maxTop - minTop) * step) / 8]);
     }
   });
 }
@@ -515,11 +651,11 @@ function getRaySegment(box, centerX, centerY, halfImageWidth, halfImageHeight, l
     Math.abs(unitX) > 0.01 ? halfImageWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
     Math.abs(unitY) > 0.01 ? halfImageHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
   );
-  const halfWidth = (box.right - box.left) / 2;
-  const halfHeight = (box.bottom - box.top) / 2;
+  const halfLabelWidth = (box.right - box.left) / 2;
+  const halfLabelHeight = (box.bottom - box.top) / 2;
   const labelRadius = Math.min(
-    Math.abs(unitX) > 0.01 ? halfWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
-    Math.abs(unitY) > 0.01 ? halfHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
+    Math.abs(unitX) > 0.01 ? halfLabelWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
+    Math.abs(unitY) > 0.01 ? halfLabelHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
   );
 
   return {
@@ -530,13 +666,39 @@ function getRaySegment(box, centerX, centerY, halfImageWidth, halfImageHeight, l
   };
 }
 
+function clipRayToLabelBoxes(ray, boxes, gap) {
+  const expandedBoxes = boxes.map((box) => expandBox(box, gap));
+  const distance = Math.hypot(ray.x2 - ray.x1, ray.y2 - ray.y1) || 1;
+  const unitX = (ray.x2 - ray.x1) / distance;
+  const unitY = (ray.y2 - ray.y1) / distance;
+  let clippedRay = ray;
+  let closestDistance = distance;
+
+  expandedBoxes.forEach((box) => {
+    const entry = getLineBoxEntryPoint(ray, box);
+    if (!entry) return;
+
+    const entryDistance = Math.hypot(entry.x - ray.x1, entry.y - ray.y1);
+    if (entryDistance < 1 || entryDistance >= closestDistance) return;
+
+    closestDistance = entryDistance;
+    clippedRay = {
+      ...ray,
+      x2: entry.x - unitX * gap,
+      y2: entry.y - unitY * gap
+    };
+  });
+
+  return clippedRay;
+}
+
 function fitCalloutsToPoster() {
   const posterRect = poster.getBoundingClientRect();
   const imageRect = detailImage.getBoundingClientRect();
   const titleRect = posterTitle.getBoundingClientRect();
   const padding = 8;
   const imageGap = 42;
-  const labelGap = 12;
+  const labelGap = 18;
   const occupiedBoxes = [];
   const occupiedRays = [];
   const calloutElements = [...callouts.querySelectorAll(".callout")];
@@ -548,7 +710,7 @@ function fitCalloutsToPoster() {
   const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
   const headerGap = Math.max(44, posterBox.height * 0.045);
   const headerBottom = titleRect.bottom - posterRect.top + headerGap;
-  const angleStep = (Math.PI * 2) / Math.max(calloutElements.length, 1);
+  const angleStep = Math.PI / Math.max(Math.ceil(calloutElements.length / 2), 2);
   const lineImageGap = 18;
   const halfImageWidth = imageRect.width / 2 + lineImageGap;
   const halfImageHeight = imageRect.height / 2 + lineImageGap;
@@ -566,7 +728,8 @@ function fitCalloutsToPoster() {
     const maxLeft = posterBox.width - width - padding;
     const minTop = Math.max(padding, headerBottom);
     const maxTop = posterBox.height - height - padding;
-    const angle = getEvenCalloutAngle(index, calloutElements.length);
+    const angle = getBalancedCalloutAngle(index, calloutElements.length);
+    const expectedSide = Math.sin(angle) < 0 ? "upper" : "lower";
     const radiusX = Math.max(imageRect.width / 2 + width / 2 + 54, posterBox.width * 0.34);
     const radiusY = Math.max(imageRect.height / 2 + height / 2 + 92, posterBox.height * 0.24);
     const desiredLeft = centerX + Math.cos(angle) * radiusX - width / 2;
@@ -574,6 +737,7 @@ function fitCalloutsToPoster() {
     const candidates = getRadialCandidates(angle, angleStep, centerX, centerY, radiusX, radiusY, width, height);
     addEdgeCandidates(candidates, minLeft, maxLeft, minTop, maxTop, safeImage, width, height, labelGap);
     let best = { left: clamp(desiredLeft, minLeft, maxLeft), top: clamp(desiredTop, minTop, maxTop), score: Number.POSITIVE_INFINITY };
+    let bestClean = { ...best };
 
     candidates.forEach(([candidateLeft, candidateTop]) => {
       const left = clamp(candidateLeft, minLeft, maxLeft);
@@ -581,20 +745,36 @@ function fitCalloutsToPoster() {
       const box = { left, top, right: left + width, bottom: top + height };
       const spacedBox = expandBox(box, labelGap);
       const ray = getRaySegment(box, centerX, centerY, halfImageWidth, halfImageHeight, labelGap);
+      const candidateCenterY = top + height / 2;
+      const rayCrossesLabel =
+        occupiedBoxes.some((occupiedBox) => lineIntersectsBox(ray, occupiedBox)) ||
+        occupiedRays.some((occupiedRay) => lineIntersectsBox(occupiedRay, spacedBox));
+      const rayCrossesRay = occupiedRays.some((occupiedRay) => linesIntersect(ray, occupiedRay));
+      const overlapsLabel = occupiedBoxes.some((occupiedBox) => boxesOverlap(spacedBox, occupiedBox));
       const distance = Math.hypot(left - desiredLeft, top - desiredTop);
       const collisionPenalty = overlapArea(box, safeImage) * 10000;
+      const wrongSidePenalty =
+        (expectedSide === "upper" && candidateCenterY > centerY - height / 2) ||
+        (expectedSide === "lower" && candidateCenterY < centerY + height / 2)
+          ? 2500000
+          : 0;
       const labelCollisionPenalty = occupiedBoxes.reduce(
         (penalty, occupiedBox) => penalty + overlapArea(spacedBox, occupiedBox) * 50000 + (boxesOverlap(spacedBox, occupiedBox) ? 1000000 : 0),
         0
       );
-      const rayCollisionPenalty =
-        occupiedBoxes.reduce((penalty, occupiedBox) => penalty + (lineIntersectsBox(ray, occupiedBox) ? 500000 : 0), 0) +
-        occupiedRays.reduce((penalty, occupiedRay) => penalty + (lineIntersectsBox(occupiedRay, spacedBox) ? 500000 : 0), 0);
-      const score = distance + collisionPenalty + labelCollisionPenalty + rayCollisionPenalty;
+      const rayCollisionPenalty = (rayCrossesLabel ? 5000000 : 0) + (rayCrossesRay ? 1500000 : 0);
+      const score = distance + wrongSidePenalty + collisionPenalty + labelCollisionPenalty + rayCollisionPenalty;
+      const cleanScore = distance + wrongSidePenalty + collisionPenalty + labelCollisionPenalty;
 
       if (score < best.score) best = { left, top, score };
+      if (!overlapsLabel && !rayCrossesLabel && !rayCrossesRay && cleanScore < bestClean.score) {
+        bestClean = { left, top, score: cleanScore };
+      }
     });
 
+    if (bestClean.score < Number.POSITIVE_INFINITY) best = bestClean;
+    const offsetY = Number.parseFloat(calloutElement.dataset.offsetY) || 0;
+    best.top = clamp(best.top + offsetY, minTop, maxTop);
     calloutElement.style.left = `${best.left}px`;
     calloutElement.style.top = `${best.top}px`;
     const placedBox = { left: best.left, top: best.top, right: best.left + width, bottom: best.top + height };
@@ -623,41 +803,49 @@ function positionCalloutRays() {
   const centerX = imageRect.left - posterRect.left + imageRect.width / 2;
   const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
   const imageGap = 18;
-  const labelGap = 12;
+  const labelGap = 18;
   const halfImageWidth = imageRect.width / 2 + imageGap;
   const halfImageHeight = imageRect.height / 2 + imageGap;
   const calloutElements = [...callouts.querySelectorAll(".callout")];
   const rayElements = [...callouts.querySelectorAll(".callout-ray")];
+  const labelBoxes = calloutElements.map((calloutElement) => ({
+    left: calloutElement.offsetLeft,
+    top: calloutElement.offsetTop,
+    right: calloutElement.offsetLeft + calloutElement.offsetWidth,
+    bottom: calloutElement.offsetTop + calloutElement.offsetHeight
+  }));
 
   calloutElements.forEach((calloutElement, index) => {
-    const labelCenterX = calloutElement.offsetLeft + calloutElement.offsetWidth / 2;
-    const labelCenterY = calloutElement.offsetTop + calloutElement.offsetHeight / 2;
-    const dx = labelCenterX - centerX;
-    const dy = labelCenterY - centerY;
-    const distance = Math.hypot(dx, dy) || 1;
-    const unitX = dx / distance;
-    const unitY = dy / distance;
-    const imageRadius = Math.min(
-      Math.abs(unitX) > 0.01 ? halfImageWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
-      Math.abs(unitY) > 0.01 ? halfImageHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
+    const rawRay = getRaySegment(
+      {
+        left: calloutElement.offsetLeft,
+        top: calloutElement.offsetTop,
+        right: calloutElement.offsetLeft + calloutElement.offsetWidth,
+        bottom: calloutElement.offsetTop + calloutElement.offsetHeight
+      },
+      centerX,
+      centerY,
+      halfImageWidth,
+      halfImageHeight,
+      labelGap
     );
-    const startX = centerX + unitX * imageRadius;
-    const startY = centerY + unitY * imageRadius;
-    const halfWidth = calloutElement.offsetWidth / 2;
-    const halfHeight = calloutElement.offsetHeight / 2;
-    const labelRadius = Math.min(
-      Math.abs(unitX) > 0.01 ? halfWidth / Math.abs(unitX) : Number.POSITIVE_INFINITY,
-      Math.abs(unitY) > 0.01 ? halfHeight / Math.abs(unitY) : Number.POSITIVE_INFINITY
-    );
-    const endX = labelCenterX - unitX * (labelRadius + labelGap);
-    const endY = labelCenterY - unitY * (labelRadius + labelGap);
-    const lineLength = Math.max(0, Math.hypot(endX - startX, endY - startY));
-    const lineRotate = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
+    const otherLabelBoxes = labelBoxes.filter((_, labelIndex) => labelIndex !== index);
+    const ray = clipRayToLabelBoxes(rawRay, otherLabelBoxes, labelGap);
     const rayElement = rayElements[index];
 
     if (!rayElement) return;
-    rayElement.style.setProperty("--line-x", `${startX}px`);
-    rayElement.style.setProperty("--line-y", `${startY}px`);
+    const rayScale = clamp(Number.parseFloat(rayElement.dataset.rayScale) || 1, 0, 1);
+    const rayTrim = Math.max(0, Number.parseFloat(rayElement.dataset.rayTrim) || 0);
+    const explicitRayLength = Number.parseFloat(rayElement.dataset.rayLength);
+    const rayOffsetX = Number.parseFloat(rayElement.dataset.rayOffsetX) || 0;
+    const rayOffsetY = Number.parseFloat(rayElement.dataset.rayOffsetY) || 0;
+    const rayEndX = ray.x1 + (ray.x2 - ray.x1) * rayScale;
+    const rayEndY = ray.y1 + (ray.y2 - ray.y1) * rayScale;
+    const calculatedLength = Math.max(0, Math.hypot(rayEndX - ray.x1, rayEndY - ray.y1) - rayTrim);
+    const lineLength = Number.isFinite(explicitRayLength) ? Math.max(0, explicitRayLength) : calculatedLength;
+    const lineRotate = Math.atan2(rayEndY - ray.y1, rayEndX - ray.x1) * (180 / Math.PI);
+    rayElement.style.setProperty("--line-x", `${ray.x1 + rayOffsetX}px`);
+    rayElement.style.setProperty("--line-y", `${ray.y1 + rayOffsetY}px`);
     rayElement.style.setProperty("--line-l", `${lineLength}px`);
     rayElement.style.setProperty("--line-r", `${lineRotate}deg`);
   });
@@ -774,11 +962,17 @@ function openDetail(id, sourceButton) {
       (ingredient, index) => `
         <span
           class="callout-ray"
+          data-ray-scale="${ingredient.rayScale ?? 1}"
+          data-ray-trim="${ingredient.rayTrim ?? 0}"
+          data-ray-length="${ingredient.rayLength ?? ""}"
+          data-ray-offset-x="${ingredient.rayOffsetX ?? 0}"
+          data-ray-offset-y="${ingredient.rayOffsetY ?? 0}"
           style="--delay: ${120 + index * 55}ms;"
           aria-hidden="true"
         ></span>
         <div
           class="callout"
+          data-offset-y="${ingredient.offsetY ?? 0}"
           style="
             --box: ${ingredient.box};
             --size: ${ingredient.size};
