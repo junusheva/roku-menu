@@ -170,7 +170,7 @@ const breakfastItems = [
     ingredients: detailCallouts(
       ["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"],
       {
-        4: { rayLength: 50 },
+        4: { rayX: 130.85890854305006, rayY: 599.96875, rayLength: 50 },
         5: { offsetY: 45, rayLength: 10, rayOffsetX: 20, rayOffsetY: -30 }
       }
     )
@@ -259,7 +259,7 @@ const eveningItems = [
     ingredients: detailCallouts(
       ["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"],
       {
-        4: { rayLength: 50 },
+        4: { rayX: 130.85890854305006, rayY: 599.96875, rayLength: 50 },
         5: { offsetY: 45, rayLength: 10, rayOffsetX: 20, rayOffsetY: -30 }
       }
     )
@@ -837,6 +837,8 @@ function positionCalloutRays() {
     const rayScale = clamp(Number.parseFloat(rayElement.dataset.rayScale) || 1, 0, 1);
     const rayTrim = Math.max(0, Number.parseFloat(rayElement.dataset.rayTrim) || 0);
     const explicitRayLength = Number.parseFloat(rayElement.dataset.rayLength);
+    const explicitRayX = Number.parseFloat(rayElement.dataset.rayX);
+    const explicitRayY = Number.parseFloat(rayElement.dataset.rayY);
     const rayOffsetX = Number.parseFloat(rayElement.dataset.rayOffsetX) || 0;
     const rayOffsetY = Number.parseFloat(rayElement.dataset.rayOffsetY) || 0;
     const rayEndX = ray.x1 + (ray.x2 - ray.x1) * rayScale;
@@ -844,8 +846,10 @@ function positionCalloutRays() {
     const calculatedLength = Math.max(0, Math.hypot(rayEndX - ray.x1, rayEndY - ray.y1) - rayTrim);
     const lineLength = Number.isFinite(explicitRayLength) ? Math.max(0, explicitRayLength) : calculatedLength;
     const lineRotate = Math.atan2(rayEndY - ray.y1, rayEndX - ray.x1) * (180 / Math.PI);
-    rayElement.style.setProperty("--line-x", `${ray.x1 + rayOffsetX}px`);
-    rayElement.style.setProperty("--line-y", `${ray.y1 + rayOffsetY}px`);
+    const lineX = Number.isFinite(explicitRayX) ? explicitRayX : ray.x1 + rayOffsetX;
+    const lineY = Number.isFinite(explicitRayY) ? explicitRayY : ray.y1 + rayOffsetY;
+    rayElement.style.setProperty("--line-x", `${lineX}px`);
+    rayElement.style.setProperty("--line-y", `${lineY}px`);
     rayElement.style.setProperty("--line-l", `${lineLength}px`);
     rayElement.style.setProperty("--line-r", `${lineRotate}deg`);
   });
@@ -965,6 +969,8 @@ function openDetail(id, sourceButton) {
           data-ray-scale="${ingredient.rayScale ?? 1}"
           data-ray-trim="${ingredient.rayTrim ?? 0}"
           data-ray-length="${ingredient.rayLength ?? ""}"
+          data-ray-x="${ingredient.rayX ?? ""}"
+          data-ray-y="${ingredient.rayY ?? ""}"
           data-ray-offset-x="${ingredient.rayOffsetX ?? 0}"
           data-ray-offset-y="${ingredient.rayOffsetY ?? 0}"
           style="--delay: ${120 + index * 55}ms;"
