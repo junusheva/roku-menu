@@ -170,7 +170,7 @@ const breakfastItems = [
     ingredients: detailCallouts(
       ["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"],
       {
-        4: { rayX: 130.85890854305006, rayY: 599.96875, rayLength: 50 },
+        4: { offsetY: -80, rayX: 130.85890854305006, rayY: 559.96875, rayLength: 30 },
         5: { offsetY: 45, rayLength: 10, rayOffsetX: 20, rayOffsetY: -30 }
       }
     )
@@ -259,7 +259,7 @@ const eveningItems = [
     ingredients: detailCallouts(
       ["курица в панировке", "салат айсберг", "соус айоли", "лимон", "пармезан", "домашние<br>чипсы"],
       {
-        4: { rayX: 130.85890854305006, rayY: 599.96875, rayLength: 50 },
+        4: { offsetY: -80, rayX: 130.85890854305006, rayY: 559.96875, rayLength: 30 },
         5: { offsetY: 45, rayLength: 10, rayOffsetX: 20, rayOffsetY: -30 }
       }
     )
@@ -310,6 +310,275 @@ const eveningItems = [
     imageWidth: "220px",
     description: "Домашние чипсы, посыпается копченым курутом и подается с соусом айоли",
     ingredients: detailCallouts(["домашние чипсы", "копченый курут", "соус айоли"])
+  }
+];
+
+const barDrinkItems = [
+  {
+    name: "Раф с кедровыми орехами",
+    price: "350с",
+    image: "assets/bar-raf-pine-nuts.png",
+    imageWidth: "205px"
+  },
+  {
+    name: "Юдзу эспрессо тоник",
+    price: "350с",
+    image: "assets/bar-yuzu-espresso-tonic.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Эспрессо тоник",
+    price: "300с",
+    image: "assets/bar-espresso-tonic.png",
+    imageWidth: "118px"
+  },
+  {
+    name: "Апельсиновый бамбл",
+    price: "420с",
+    image: "assets/bar-orange-bumble.png",
+    imageWidth: "205px"
+  },
+  {
+    name: "Гранатовый бамбл",
+    price: "480с",
+    image: "assets/bar-pomegranate-bumble.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Монблан",
+    price: "350с",
+    image: "assets/bar-montblanc.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Колд Брю вишня",
+    price: "350с",
+    image: "assets/bar-cold-brew-cherry.png",
+    imageWidth: "185px"
+  },
+  {
+    name: "Колд брю малина",
+    price: "350с",
+    image: "assets/bar-cold-brew-raspberry.png",
+    imageWidth: "185px"
+  }
+];
+
+const matchaItems = [
+  {
+    name: "Матча шот",
+    price: "200с",
+    image: "assets/bar-espresso-tonic.png",
+    imageWidth: "118px"
+  },
+  {
+    name: "Матча латте",
+    price: "350с",
+    image: "assets/bar-matcha-latte.png",
+    imageWidth: "205px"
+  },
+  {
+    name: "Матча латте на альтернативном молоке",
+    price: "390с",
+    image: "assets/bar-matcha-alternative.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Матча вишня-миндаль",
+    price: "450с",
+    image: "assets/bar-matcha-cherry-almond.png",
+    imageWidth: "185px"
+  },
+  {
+    name: "Матча манго-юдзу",
+    price: "450с",
+    image: "assets/bar-matcha-mango-yuzu.png",
+    imageWidth: "185px"
+  },
+  {
+    name: "Матча алоэ-клауди",
+    price: "450с",
+    image: "assets/bar-matcha-aloe-cloudy.png",
+    imageWidth: "118px"
+  },
+  {
+    name: "Матча клубника",
+    price: "450с",
+    image: "assets/bar-matcha-strawberry.png",
+    imageWidth: "118px"
+  },
+  {
+    name: "Матча маракуйя-жасмин",
+    price: "390с",
+    image: "assets/bar-matcha-passion-jasmine.png",
+    imageWidth: "118px"
+  },
+  {
+    name: "Матча тоник персик",
+    price: "350с",
+    image: "assets/bar-matcha-tonic-peach.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Ходзича банан",
+    price: "420с",
+    image: "assets/bar-hojicha-banana.png",
+    imageWidth: "185px"
+  }
+];
+
+const coldDrinkItems = [
+  {
+    name: "Лимонад Грейпфрут-личи",
+    price: "320с",
+    image: "assets/bar-lemonade-grapefruit-lychee.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Лимонад Юдзу-имбирь",
+    price: "320с",
+    image: "assets/bar-lemonade-yuzu-ginger.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Лимонад Щавель-дыня",
+    price: "320с",
+    image: "assets/bar-lemonade-sorrel-melon.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Лимонад Ежевика",
+    price: "320с",
+    image: "assets/bar-lemonade-blackberry.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Лимонад Каламанси-лайм",
+    price: "320с",
+    image: "assets/bar-lemonade-calamansi-lime.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Смузи Тропик-матча",
+    price: "470с",
+    image: "assets/bar-smoothie-tropic-matcha.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Смузи манго-банан",
+    price: "470с",
+    image: "assets/bar-smoothie-mango-banana.png",
+    imageWidth: "190px"
+  },
+  {
+    name: "Айс-ти жасмин-персик",
+    price: "390с",
+    image: "assets/bar-espresso-tonic.png",
+    imageWidth: "118px"
+  }
+];
+
+const detoxItems = [
+  {
+    name: "Зеленый",
+    price: "220с",
+    image: "assets/bar-detox-green.png",
+    imageWidth: "185px"
+  },
+  {
+    name: "Цитрус",
+    price: "220с",
+    image: "assets/bar-detox-citrus.png",
+    imageWidth: "185px"
+  },
+  {
+    name: "Клубника-злаки",
+    price: "220с",
+    image: "assets/bar-detox-strawberry-grains.png",
+    imageWidth: "185px"
+  }
+];
+
+const cocktailItems = [
+  {
+    id: "cocktail-roku",
+    name: "[ROKU]",
+    shortName: "[ROKU]",
+    title: "[ROKU]",
+    price: "700с",
+    image: "assets/cocktail-roku.png",
+    imageWidth: "205px",
+    ingredients: detailCallouts(["джин", "соджу", "юдзу", "нитро-пена"])
+  },
+  {
+    id: "cocktail-gekko",
+    name: "Gekko",
+    shortName: "Gekko",
+    title: "GEKKO",
+    price: "700с",
+    image: "assets/cocktail-gekko.png",
+    imageWidth: "205px",
+    ingredients: detailCallouts(["водка", "виноградный соджу", "жасминовый кордиал"])
+  },
+  {
+    id: "cocktail-vermilion",
+    name: "Vermilion",
+    shortName: "Vermilion",
+    title: "VERMILION",
+    price: "700с",
+    image: "assets/cocktail-vermilion.png",
+    imageWidth: "205px",
+    ingredients: detailCallouts(["Aperol", "Martini Rosso", "ликер личи", "молочный кордиал"])
+  },
+  {
+    id: "cocktail-gold-static",
+    name: "Gold Static",
+    shortName: "Gold Static",
+    title: "GOLD STATIC",
+    price: "700с",
+    image: "assets/cocktail-gold-static.png",
+    imageWidth: "205px",
+    ingredients: detailCallouts(["ананасовый кордиал", "соджу ананас", "саке", "медовый сироп"])
+  },
+  {
+    id: "cocktail-kurasango",
+    name: "Kurasango",
+    shortName: "Kurasango",
+    title: "KURASANGO",
+    price: "700с",
+    image: "assets/cocktail-kurasango.png",
+    imageWidth: "205px",
+    ingredients: detailCallouts(["Sauvignon Blanc", "соджу черника", "джин", "молочный кордиал", "шапка маракуйя-черника"])
+  },
+  {
+    id: "cocktail-garnet",
+    name: "Garnet",
+    shortName: "Garnet",
+    title: "GARNET",
+    price: "700с",
+    image: "assets/cocktail-garnet.png",
+    imageWidth: "205px",
+    ingredients: detailCallouts(["текила", "гранат", "кордиал гранат-груша"])
+  },
+  {
+    id: "cocktail-akane",
+    name: "Akane",
+    shortName: "Akane",
+    title: "AKANE",
+    price: "700с",
+    image: "assets/cocktail-akane.png",
+    imageWidth: "205px",
+    ingredients: detailCallouts(["ром", "кокосовый кордиал", "чай карамельный ройбуш"])
+  },
+  {
+    id: "cocktail-eclat",
+    name: "Éclat",
+    shortName: "Éclat",
+    title: "ÉCLAT",
+    price: "700с",
+    image: "assets/cocktail-eclat.png",
+    imageWidth: "190px",
+    ingredients: detailCallouts(["ром", "манговый кордиал", "маракуйя"])
   }
 ];
 
@@ -387,12 +656,15 @@ function detailCallouts(labels, optionsByIndex = {}) {
 function getActiveItems() {
   if (activeCategory === "breakfasts") return breakfastItems;
   if (activeCategory === "evening") return eveningItems;
+  if (activeCategory === "cocktails") return cocktailItems;
   return menuItems;
 }
 
 function getActiveTitle() {
   if (activeCategory === "breakfasts") return "ЗАВТРАКИ";
   if (activeCategory === "evening") return "ВЕЧЕРНЕЕ МЕНЮ";
+  if (activeCategory === "bar") return "БАР";
+  if (activeCategory === "cocktails") return "КОКТЕЙЛИ";
   return "ТОСТЫ";
 }
 
@@ -468,6 +740,159 @@ function renderEvening() {
     </div>
   `;
   menuView.setAttribute("aria-label", "Вечернее меню");
+}
+
+function renderBarDrinkSection(title, ariaLabel, items, options = {}) {
+  return `
+      <section class="bar-drinks-section${options.className ? ` ${options.className}` : ""}" aria-label="${ariaLabel}">
+        <h2>${title}</h2>
+        <div class="bar-drink-board">
+          ${items
+            .map(
+              (item) =>
+                options.clickable
+                  ? `
+                <button class="bar-drink bar-drink-button" type="button" data-id="${item.id}" style="--image-width: ${item.imageWidth};" aria-label="${item.title}">
+                  <img src="${item.image}" alt="" />
+                  <span>${item.name}<br>${item.price}</span>
+                </button>
+              `
+                  : `
+                <article class="bar-drink" style="--image-width: ${item.imageWidth};">
+                  <img src="${item.image}" alt="" />
+                  <span>${item.name}<br>${item.price}</span>
+                </article>
+              `
+            )
+            .join("")}
+        </div>
+      </section>
+  `;
+}
+
+function renderBarListSection(title, ariaLabel, groups, className = "") {
+  return `
+      <section class="bar-list-section${className ? ` ${className}` : ""}" aria-label="${ariaLabel}">
+        <h2>${title}</h2>
+        <div class="bar-list">
+          ${groups
+            .map(
+              (group) => `
+                <ul>
+                  ${group
+                    .map(
+                      (item) =>
+                        `<li${item.className ? ` class="${item.className}"` : ""}><span>${item.name}</span>${
+                          item.price ? `<b>${item.price}</b>` : ""
+                        }</li>`
+                    )
+                    .join("")}
+                </ul>
+              `
+            )
+            .join("")}
+        </div>
+      </section>
+  `;
+}
+
+function renderCocktails() {
+  menuView.innerHTML = `
+    <div class="bar-page">
+      ${renderBarDrinkSection("АВТОРСКИЕ<br>КОКТЕЙЛИ:", "Авторские коктейли", cocktailItems, {
+        clickable: true,
+        className: "cocktail-author-section"
+      })}
+      ${renderBarListSection("КЛАССИЧЕСКИЕ<br>КОКТЕЙЛИ:", "Классические коктейли", [
+        [{ name: "все по 680с", price: "", className: "bar-list-note" }],
+        [
+          { name: "Aperol Spritz", price: "" },
+          { name: "Whiskey Sour", price: "" },
+          { name: "French 75", price: "" },
+          { name: "Pornstar Martini", price: "" },
+          { name: "Negroni", price: "" },
+          { name: "Espresso Martini", price: "" },
+          { name: "Gin Tonic", price: "" },
+          { name: "Daiquiri", price: "" },
+          { name: "Clover Club", price: "" },
+          { name: "Basil Smash", price: "" }
+        ]
+      ], "cocktail-classics-section")}
+    </div>
+  `;
+  menuView.setAttribute("aria-label", "Коктейли");
+}
+
+function renderBar() {
+  menuView.innerHTML = `
+    <div class="bar-page">
+      <section class="bar-coffee-section" aria-label="Кофе">
+        <h2>КОФЕ:</h2>
+        <img class="bar-coffee" src="assets/coffee.png" alt="" />
+        <div class="bar-list">
+          <ul>
+            <li><span>Доппио</span><b>250с</b></li>
+            <li><span>Американо</span><b>260с</b></li>
+            <li><span>Флэй-Уайт</span><b>280с</b></li>
+            <li><span>Капучино</span><b>250с/310с</b></li>
+            <li><span>Латте</span><b>310с</b></li>
+          </ul>
+          <ul>
+            <li><span>Батч-брю</span><b>250с</b></li>
+            <li><span>Харио V60</span><b>370с/430с</b></li>
+            <li><span>Оригами</span><b>370с</b></li>
+          </ul>
+        </div>
+      </section>
+
+      ${renderBarDrinkSection("КОФЕЙНЫЕ<br>НАПИТКИ:", "Кофейные напитки", barDrinkItems)}
+      ${renderBarDrinkSection("МАТЧА:", "Матча", matchaItems)}
+      ${renderBarListSection("АВТОРСКИЕ<br>ЧАИ:", "Авторские чаи", [
+        [
+          { name: "Ананас-черника", price: "200с/380с" },
+          { name: "Цитрус-алоэ", price: "200с/380с" },
+          { name: "Имбирь", price: "200с/380с" },
+          { name: "Малина-манго", price: "200с/380с" }
+        ]
+      ])}
+      ${renderBarListSection("ЭЛИТНЫЕ<br>ЧАИ:", "Элитные чаи", [
+        [
+          { name: "Те Гуань Инь", price: "290с" },
+          { name: "Жасмин", price: "290с" },
+          { name: "Ассам 17", price: "290с" },
+          { name: "Молочный улун", price: "290с" },
+          { name: "Гречишный Ку-Цау", price: "290с" },
+          { name: "Да Хун Пау", price: "290с" },
+          { name: "Шу Пу-эр", price: "290с" }
+        ]
+      ])}
+      ${renderBarDrinkSection("ХОЛОДНЫЕ<br>НАПИТКИ:", "Холодные напитки", coldDrinkItems)}
+      ${renderBarDrinkSection("ДЕТОКСЫ:", "Детоксы", detoxItems)}
+      ${renderBarListSection("ФРЕШИ:", "Фреши", [
+        [
+          { name: "Апельсин", price: "440с" },
+          { name: "Яблоко", price: "250с" },
+          { name: "Морковь", price: "200с" }
+        ]
+      ])}
+      ${renderBarListSection("ПРОХЛАДИТЕЛЬНЫЕ<br>НАПИТКИ:", "Прохладительные напитки", [
+        [
+          { name: "Вода легенда", price: "100с" },
+          { name: "Coca-Cola/Fanta", price: "200с" },
+          { name: "Cок ЯН в ассортименте", price: "300с" },
+          { name: "Schweppes", price: "350с" }
+        ]
+      ])}
+      ${renderBarListSection("ДОПЫ:", "Допы", [
+        [
+          { name: "Апельсин/лимон", price: "50с" },
+          { name: "Лайм", price: "120с" },
+          { name: "Мед", price: "50с" }
+        ]
+      ])}
+    </div>
+  `;
+  menuView.setAttribute("aria-label", "Бар");
 }
 
 function clamp(value, min, max) {
@@ -860,7 +1285,7 @@ function prepareMenuParting(sourceButton) {
   const posterCenterX = posterRect.left + posterRect.width / 2;
   const posterCenterY = posterRect.top + posterRect.height / 2;
 
-  menuView.querySelectorAll(".menu-item, .breakfast-item").forEach((menuItem) => {
+  menuView.querySelectorAll(".menu-item, .breakfast-item, .bar-drink-button").forEach((menuItem) => {
     if (menuItem === sourceButton) return;
 
     const rect = menuItem.getBoundingClientRect();
@@ -877,7 +1302,7 @@ function prepareMenuParting(sourceButton) {
 }
 
 function resetMenuParting() {
-  menuView.querySelectorAll(".menu-item, .breakfast-item").forEach((menuItem) => {
+  menuView.querySelectorAll(".menu-item, .breakfast-item, .bar-drink-button").forEach((menuItem) => {
     menuItem.classList.remove("is-parting");
     menuItem.style.removeProperty("--part-x");
     menuItem.style.removeProperty("--part-y");
@@ -888,7 +1313,7 @@ function openToasts() {
   window.clearTimeout(zoomTimer);
   activeCategory = "toasts";
   renderToasts();
-  poster.classList.remove("is-home", "is-breakfasts", "is-evening", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.remove("is-home", "is-breakfasts", "is-evening", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-toasts");
   detailView.style.transition = "";
   detailView.style.transform = "";
@@ -903,7 +1328,7 @@ function openBreakfasts() {
   window.clearTimeout(zoomTimer);
   activeCategory = "breakfasts";
   renderBreakfasts();
-  poster.classList.remove("is-home", "is-toasts", "is-evening", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.remove("is-home", "is-toasts", "is-evening", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-breakfasts");
   detailView.style.transition = "";
   detailView.style.transform = "";
@@ -918,7 +1343,7 @@ function openEvening() {
   window.clearTimeout(zoomTimer);
   activeCategory = "evening";
   renderEvening();
-  poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-evening");
   detailView.style.transition = "";
   detailView.style.transform = "";
@@ -929,10 +1354,40 @@ function openEvening() {
   poster.scrollIntoView({ block: "start" });
 }
 
+function openBar() {
+  window.clearTimeout(zoomTimer);
+  activeCategory = "bar";
+  renderBar();
+  poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-evening", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.add("is-bar");
+  detailView.style.transition = "";
+  detailView.style.transform = "";
+  detailView.setAttribute("aria-hidden", "true");
+  posterTitle.textContent = "БАР";
+  resetMenuParting();
+  document.querySelectorAll(".is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  poster.scrollIntoView({ block: "start" });
+}
+
+function openCocktails() {
+  window.clearTimeout(zoomTimer);
+  activeCategory = "cocktails";
+  renderCocktails();
+  poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-evening", "is-bar", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.add("is-cocktails");
+  detailView.style.transition = "";
+  detailView.style.transform = "";
+  detailView.setAttribute("aria-hidden", "true");
+  posterTitle.textContent = "КОКТЕЙЛИ";
+  resetMenuParting();
+  document.querySelectorAll(".is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
+  poster.scrollIntoView({ block: "start" });
+}
+
 function openHome() {
   window.clearTimeout(zoomTimer);
   activeCategory = "home";
-  poster.classList.remove("is-toasts", "is-breakfasts", "is-evening", "is-detail", "is-animating", "is-callout-ready");
+  poster.classList.remove("is-toasts", "is-breakfasts", "is-evening", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-home");
   detailView.style.transition = "";
   detailView.style.transform = "";
@@ -996,6 +1451,8 @@ function openDetail(id, sourceButton) {
   poster.classList.toggle("is-toasts", activeCategory === "toasts");
   poster.classList.toggle("is-breakfasts", activeCategory === "breakfasts");
   poster.classList.toggle("is-evening", activeCategory === "evening");
+  poster.classList.toggle("is-bar", activeCategory === "bar");
+  poster.classList.toggle("is-cocktails", activeCategory === "cocktails");
   poster.classList.add("is-detail");
   poster.classList.add("is-animating");
   detailView.setAttribute("aria-hidden", "false");
@@ -1110,10 +1567,12 @@ mainView.addEventListener("click", (event) => {
   if (categoryButton.dataset.category === "toasts") openToasts();
   if (categoryButton.dataset.category === "breakfasts") openBreakfasts();
   if (categoryButton.dataset.category === "evening") openEvening();
+  if (categoryButton.dataset.category === "bar") openBar();
+  if (categoryButton.dataset.category === "cocktails") openCocktails();
 });
 
 menuView.addEventListener("click", (event) => {
-  const itemButton = event.target.closest(".menu-item, .breakfast-item");
+  const itemButton = event.target.closest(".menu-item, .breakfast-item, .bar-drink-button");
   if (itemButton) openDetail(itemButton.dataset.id, itemButton);
 });
 
@@ -1134,7 +1593,13 @@ document.addEventListener("keydown", (event) => {
       closeDetail();
       return;
     }
-    if (poster.classList.contains("is-toasts") || poster.classList.contains("is-breakfasts") || poster.classList.contains("is-evening")) openHome();
+    if (
+      poster.classList.contains("is-toasts") ||
+      poster.classList.contains("is-breakfasts") ||
+      poster.classList.contains("is-evening") ||
+      poster.classList.contains("is-bar") ||
+      poster.classList.contains("is-cocktails")
+    ) openHome();
   }
 });
 
