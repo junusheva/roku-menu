@@ -7,6 +7,8 @@
   --paper: #fbf7f4;
   --ink: #080708;
   --shadow: rgba(67, 48, 33, 0.2);
+  --cocktail-cream: #f4ede2;
+  --cocktail-shadow: rgba(16, 12, 9, 0.34);
   --font-display: "Cuphead Memphis", "Cooper Black", "Courier New", monospace;
 }
 
@@ -46,6 +48,17 @@ body {
 
 button {
   font: inherit;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.menu-item img,
+.breakfast-item img,
+.bar-drink-button img {
+  pointer-events: none;
 }
 
 .site-shell {
@@ -344,8 +357,35 @@ h1 {
 }
 
 .poster.is-cocktails h1 {
-  margin: clamp(16px, 4vw, 24px) 0 clamp(40px, 9vw, 58px);
-  font-size: clamp(38px, 9.8vw, 56px);
+  margin: clamp(14px, 4vw, 20px) 0 clamp(34px, 8vw, 44px);
+  color: var(--cocktail-cream);
+  font-size: clamp(38px, 8.7vw, 40px);
+}
+
+.poster.is-cocktails {
+  --ink: var(--cocktail-cream);
+  --shadow: var(--cocktail-shadow);
+  width: min(100%, 440px);
+  padding-inline: clamp(14px, 4.5vw, 20px);
+  background:
+    radial-gradient(
+      ellipse 100% 100% at 50% 50%,
+      #705c4f 0%,
+      #937f6d 50%,
+      #b7a38b 100%
+    );
+  color: var(--cocktail-cream);
+}
+
+.poster.is-cocktails .logo,
+.poster.is-cocktails .back-button img {
+  filter: brightness(0) saturate(100%) invert(94%) sepia(16%) saturate(225%) hue-rotate(337deg) brightness(105%) contrast(91%);
+}
+
+.poster.is-cocktails .bar-page {
+  width: min(100%, 400px);
+  max-width: 400px;
+  color: var(--cocktail-cream);
 }
 
 .bar-page {
@@ -447,6 +487,121 @@ h1 {
 }
 
 .cocktail-author-section {
+  margin-top: 0;
+}
+
+.poster.is-cocktails .cocktail-author-section h2,
+.poster.is-cocktails .cocktail-classics-section h2 {
+  color: var(--cocktail-cream);
+  font-size: clamp(27px, 6.5vw, 29px);
+  line-height: 0.9;
+}
+
+.poster.is-cocktails .cocktail-author-section h2 {
+  margin-bottom: 28px;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink-board {
+  position: relative;
+  display: block;
+  width: min(100%, 400px);
+  height: clamp(960px, 253vw, 1115px);
+  margin: 0 auto;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink {
+  position: absolute;
+  width: 46%;
+  gap: 6px;
+  color: var(--cocktail-cream);
+  transform: translate(var(--part-x, 0px), var(--part-y, 0px));
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(1) {
+  left: -10%;
+  top: 0;
+  width: 59%;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(2) {
+  right: 3%;
+  top: 8.6%;
+  width: 48%;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(3) {
+  left: 6%;
+  top: 24.7%;
+  width: 43%;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(4) {
+  right: 1%;
+  top: 33.5%;
+  width: 49%;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(5) {
+  left: -1%;
+  top: 45.6%;
+  width: 49%;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(6) {
+  right: 3%;
+  top: 56.5%;
+  width: 44%;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(7) {
+  left: 7%;
+  top: 68.1%;
+  width: 43%;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(8) {
+  right: 4%;
+  top: 80.8%;
+  width: 31%;
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(8) img {
+  transform: rotate(2deg);
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink img {
+  width: min(100%, var(--image-width, 205px));
+  padding-right: 0;
+  filter: drop-shadow(12px 18px 13px var(--cocktail-shadow));
+}
+
+.poster.is-cocktails .cocktail-author-section .bar-drink span {
+  width: min(100%, 150px);
+  color: var(--cocktail-cream);
+  font-size: clamp(16px, 4.1vw, 18px);
+  font-weight: 800;
+}
+
+.poster.is-cocktails .cocktail-classics-section {
+  margin-top: clamp(18px, 5vw, 28px);
+  padding-bottom: 0;
+}
+
+.poster.is-cocktails .cocktail-classics-section h2 {
+  margin-bottom: 8px;
+}
+
+.poster.is-cocktails .cocktail-classics-section .bar-list {
+  color: var(--cocktail-cream);
+  font-size: 18px;
+}
+
+.poster.is-cocktails .cocktail-classics-section .bar-list li.bar-list-note {
+  margin-bottom: 28px;
+  font-size: 18px;
+}
+
+.poster.is-cocktails .cocktail-classics-section .bar-list ul:first-child + ul {
   margin-top: 0;
 }
 

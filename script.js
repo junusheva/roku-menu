@@ -593,6 +593,7 @@ const backButton = document.querySelector("#backButton");
 const logoButton = document.querySelector("#logoButton");
 let zoomTimer;
 let activeCategory = "home";
+let activeDetailId = null;
 let edgeSwipe = null;
 
 function getCalloutLines(label) {
@@ -666,6 +667,84 @@ function getActiveTitle() {
   if (activeCategory === "bar") return "БАР";
   if (activeCategory === "cocktails") return "КОКТЕЙЛИ";
   return "ТОСТЫ";
+}
+
+function getHistoryState(category = activeCategory, detail = activeDetailId) {
+  return {
+    rokuMenu: true,
+    category,
+    ...(detail ? { detail } : {})
+  };
+}
+
+function isSameHistoryState(nextState) {
+  const currentState = window.history.state;
+  return (
+    currentState?.rokuMenu &&
+    currentState.category === nextState.category &&
+    (currentState.detail ?? null) === (nextState.detail ?? null)
+  );
+}
+
+function pushHistoryState(category = activeCategory, detail = activeDetailId) {
+  const nextState = getHistoryState(category, detail);
+  if (!isSameHistoryState(nextState)) {
+    window.history.pushState(nextState, "");
+  }
+}
+
+function replaceHistoryState(category = activeCategory, detail = activeDetailId) {
+  window.history.replaceState(getHistoryState(category, detail), "");
+}
+
+function openCategory(category) {
+  if (category === "toasts") {
+    openToasts();
+    return;
+  }
+  if (category === "breakfasts") {
+    openBreakfasts();
+    return;
+  }
+  if (category === "evening") {
+    openEvening();
+    return;
+  }
+  if (category === "bar") {
+    openBar();
+    return;
+  }
+  if (category === "cocktails") {
+    openCocktails();
+    return;
+  }
+  openHome();
+}
+
+function navigateToCategory(category) {
+  openCategory(category);
+  pushHistoryState(activeCategory);
+}
+
+function navigateHome() {
+  openHome();
+  pushHistoryState("home");
+}
+
+function findMenuButtonById(id) {
+  return menuView.querySelector(`.menu-item[data-id="${id}"], .breakfast-item[data-id="${id}"], .bar-drink-button[data-id="${id}"]`);
+}
+
+function applyHistoryState(state) {
+  if (!state?.rokuMenu || state.category === "home") {
+    openHome();
+    return;
+  }
+
+  openCategory(state.category);
+  if (state.detail) {
+    openDetail(state.detail, findMenuButtonById(state.detail));
+  }
 }
 
 function renderToasts() {
@@ -1312,6 +1391,7 @@ function resetMenuParting() {
 function openToasts() {
   window.clearTimeout(zoomTimer);
   activeCategory = "toasts";
+  activeDetailId = null;
   renderToasts();
   poster.classList.remove("is-home", "is-breakfasts", "is-evening", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-toasts");
@@ -1327,6 +1407,7 @@ function openToasts() {
 function openBreakfasts() {
   window.clearTimeout(zoomTimer);
   activeCategory = "breakfasts";
+  activeDetailId = null;
   renderBreakfasts();
   poster.classList.remove("is-home", "is-toasts", "is-evening", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-breakfasts");
@@ -1342,6 +1423,7 @@ function openBreakfasts() {
 function openEvening() {
   window.clearTimeout(zoomTimer);
   activeCategory = "evening";
+  activeDetailId = null;
   renderEvening();
   poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-evening");
@@ -1357,6 +1439,7 @@ function openEvening() {
 function openBar() {
   window.clearTimeout(zoomTimer);
   activeCategory = "bar";
+  activeDetailId = null;
   renderBar();
   poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-evening", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-bar");
@@ -1372,6 +1455,7 @@ function openBar() {
 function openCocktails() {
   window.clearTimeout(zoomTimer);
   activeCategory = "cocktails";
+  activeDetailId = null;
   renderCocktails();
   poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-evening", "is-bar", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-cocktails");
@@ -1387,6 +1471,7 @@ function openCocktails() {
 function openHome() {
   window.clearTimeout(zoomTimer);
   activeCategory = "home";
+  activeDetailId = null;
   poster.classList.remove("is-toasts", "is-breakfasts", "is-evening", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-home");
   detailView.style.transition = "";
@@ -1401,6 +1486,7 @@ function openDetail(id, sourceButton) {
   const item = getActiveItems().find((menuItem) => menuItem.id === id);
   if (!item) return;
   window.clearTimeout(zoomTimer);
+  activeDetailId = id;
 
   const sourceImage = sourceButton?.querySelector("img");
   const posterRect = poster.getBoundingClientRect();
@@ -1503,6 +1589,7 @@ function openDetail(id, sourceButton) {
 
 function closeDetail() {
   window.clearTimeout(zoomTimer);
+  activeDetailId = null;
   poster.classList.remove("is-detail");
   poster.classList.remove("is-animating");
   poster.classList.remove("is-callout-ready");
@@ -1516,10 +1603,17 @@ function closeDetail() {
 }
 
 function goBack() {
+  const state = window.history.state;
+  if (state?.rokuMenu && state.category !== "home") {
+    window.history.back();
+    return;
+  }
+
   if (poster.classList.contains("is-detail")) {
     closeDetail();
     return;
   }
+
   openHome();
 }
 
@@ -1564,21 +1658,26 @@ function handleEdgeSwipeEnd(event) {
 mainView.addEventListener("click", (event) => {
   const categoryButton = event.target.closest(".main-menu-link");
   if (!categoryButton) return;
-  if (categoryButton.dataset.category === "toasts") openToasts();
-  if (categoryButton.dataset.category === "breakfasts") openBreakfasts();
-  if (categoryButton.dataset.category === "evening") openEvening();
-  if (categoryButton.dataset.category === "bar") openBar();
-  if (categoryButton.dataset.category === "cocktails") openCocktails();
+  navigateToCategory(categoryButton.dataset.category);
 });
 
 menuView.addEventListener("click", (event) => {
   const itemButton = event.target.closest(".menu-item, .breakfast-item, .bar-drink-button");
-  if (itemButton) openDetail(itemButton.dataset.id, itemButton);
+  if (itemButton) {
+    openDetail(itemButton.dataset.id, itemButton);
+    if (poster.classList.contains("is-detail")) {
+      pushHistoryState(activeCategory, itemButton.dataset.id);
+    }
+  }
+});
+
+document.addEventListener("dragstart", (event) => {
+  if (event.target instanceof HTMLImageElement) event.preventDefault();
 });
 
 backButton.addEventListener("click", goBack);
 
-logoButton.addEventListener("click", openHome);
+logoButton.addEventListener("click", navigateHome);
 
 document.addEventListener("touchstart", handleEdgeSwipeStart, { passive: true });
 document.addEventListener("touchmove", handleEdgeSwipeMove, { passive: false });
@@ -1590,7 +1689,7 @@ document.addEventListener("touchcancel", () => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     if (poster.classList.contains("is-detail")) {
-      closeDetail();
+      goBack();
       return;
     }
     if (
@@ -1599,7 +1698,7 @@ document.addEventListener("keydown", (event) => {
       poster.classList.contains("is-evening") ||
       poster.classList.contains("is-bar") ||
       poster.classList.contains("is-cocktails")
-    ) openHome();
+    ) goBack();
   }
 });
 
@@ -1611,4 +1710,9 @@ window.addEventListener("resize", () => {
   }
 });
 
+window.addEventListener("popstate", (event) => {
+  applyHistoryState(event.state);
+});
+
 renderToasts();
+replaceHistoryState("home");
