@@ -761,7 +761,7 @@ function renderToasts() {
           aria-label="${item.title}"
         >
           <span class="menu-item-content">
-            <img src="${item.image}" alt="" />
+            <img src="${item.image}" alt="" draggable="false" />
             <span>${item.name}</span>
           </span>
         </button>
@@ -786,7 +786,7 @@ function renderBreakfasts() {
           style="--image-width: ${item.imageWidth};"
           aria-label="${item.title}"
         >
-          <img src="${item.image}" alt="" />
+          <img src="${item.image}" alt="" draggable="false" />
           <span>${item.shortName}</span>
         </button>
       `
@@ -810,7 +810,7 @@ function renderEvening() {
           style="--image-width: ${item.imageWidth};"
           aria-label="${item.title}"
         >
-          <img src="${item.image}" alt="" />
+          <img src="${item.image}" alt="" draggable="false" />
           <span>${item.shortName}</span>
         </button>
       `
@@ -832,13 +832,13 @@ function renderBarDrinkSection(title, ariaLabel, items, options = {}) {
                 options.clickable
                   ? `
                 <button class="bar-drink bar-drink-button" type="button" data-id="${item.id}" style="--image-width: ${item.imageWidth};" aria-label="${item.title}">
-                  <img src="${item.image}" alt="" />
+                  <img src="${item.image}" alt="" draggable="false" />
                   <span>${item.name}<br>${item.price}</span>
                 </button>
               `
                   : `
                 <article class="bar-drink" style="--image-width: ${item.imageWidth};">
-                  <img src="${item.image}" alt="" />
+                  <img src="${item.image}" alt="" draggable="false" />
                   <span>${item.name}<br>${item.price}</span>
                 </article>
               `
@@ -1488,17 +1488,6 @@ function openDetail(id, sourceButton) {
   window.clearTimeout(zoomTimer);
   activeDetailId = id;
 
-  const sourceImage = sourceButton?.querySelector("img");
-  const posterRect = poster.getBoundingClientRect();
-  const sourceRect = sourceImage?.getBoundingClientRect();
-  const sourceBox = sourceRect
-    ? {
-        x: sourceRect.left - posterRect.left,
-        y: sourceRect.top - posterRect.top,
-        width: sourceRect.width
-      }
-    : null;
-
   posterTitle.textContent = item.title;
   detailImage.src = item.image;
   detailImage.alt = item.title;
@@ -1546,26 +1535,12 @@ function openDetail(id, sourceButton) {
 
   sourceButton?.classList.add("is-zoom-source");
   detailView.style.transition = "none";
-
-  const nextPosterRect = poster.getBoundingClientRect();
-  const targetRect = detailImage.getBoundingClientRect();
-  const targetBox = {
-    x: targetRect.left - nextPosterRect.left,
-    y: targetRect.top - nextPosterRect.top,
-    width: targetRect.width
-  };
+  detailView.style.transform = "translate(0, 0) scale(1)";
 
   fitCalloutsToPoster();
   prepareCalloutOrigins();
   positionCalloutRays();
   poster.classList.add("is-callout-ready");
-
-  if (sourceBox) {
-    const scale = sourceBox.width / targetBox.width;
-    const translateX = sourceBox.x - targetBox.x * scale;
-    const translateY = sourceBox.y - targetBox.y * scale;
-    detailView.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-  }
 
   requestAnimationFrame(() => {
     detailView.style.transition = "";
@@ -1669,6 +1644,11 @@ menuView.addEventListener("click", (event) => {
       pushHistoryState(activeCategory, itemButton.dataset.id);
     }
   }
+});
+
+menuView.addEventListener("mousedown", (event) => {
+  const itemButton = event.target.closest(".menu-item, .breakfast-item, .bar-drink-button");
+  if (itemButton) event.preventDefault();
 });
 
 document.addEventListener("dragstart", (event) => {
