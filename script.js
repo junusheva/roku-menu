@@ -3,38 +3,44 @@ const menuItems = [
     id: "tuna",
     name: "тунец",
     title: "ТУНЕЦ",
+    price: "550с",
     image: "assets/tuna-hq.png",
     labelOffset: "-18px",
     ingredients: [
       callout("яйца", "110px", "18px"),
+      callout("консервированный тунец", "210px"),
       callout("греческий йогурт", "190px"),
       callout("кукуруза", "120px"),
-      callout("консервированный тунец", "210px"),
-      callout("сыр Чеддер", "118px"),
       callout("красный лук", "140px", undefined, {
         offsetY: 16,
         rayScale: 0.1,
         rayOffsetX: 20,
-        rayOffsetY: -40
-      })
+        rayOffsetY: -40,
+        mobileLineX: 132.061822,
+        mobileLineY: 595,
+        mobileRayLength: 20.01328
+      }),
+      callout("сыр Чеддер", "118px", undefined, { mobileRayLength: 25 })
     ]
   },
   {
     id: "egg",
     name: "яичный",
     title: "ЯИЧНЫЙ",
+    price: "450с",
     image: "assets/egg-hq.png",
     ingredients: [
       callout("яйца", "110px", "18px"),
       callout("карамелизированный лук", "190px", "14px"),
-      callout("соус айоли", "130px"),
-      callout("сыр Чеддер", "130px")
+      callout("сыр Чеддер", "130px"),
+      callout("соус айоли", "130px")
     ]
   },
   {
     id: "chicken",
     name: "чикен",
     title: "ЧИКЕН",
+    price: "550с",
     image: "assets/chicken-hq.png",
     ingredients: [
       callout("курица в панировке<br> в сладко-остром соусе", "210px", "13px"),
@@ -47,25 +53,28 @@ const menuItems = [
     id: "trout",
     name: "форель",
     title: "ФОРЕЛЬ",
+    price: "550с",
     image: "assets/trout-hq.png",
     ingredients: [
+      callout("яйца", "110px"),
       callout("малосольная форель", "160px"),
       callout("гуакамоле", "120px", "18px"),
-      callout("соус алоэ-трюфель", "170px"),
-      callout("яйца", "110px"),
-      callout("соус васаби-юдзу", "170px")
+      callout("творожный крем", "160px"),
+      callout("кунжут", "100px"),
+      callout("зеленый лук", "130px")
     ]
   },
   {
     id: "beef",
     name: "говядина",
     title: "ГОВЯДИНА",
+    price: "590с",
     image: "assets/beef-hq.png",
     ingredients: [
-      callout("сыр Чеддер", "130px", "18px"),
+      callout("яйца", "120px", "18px"),
       callout("бон филе", "132px", "18px"),
       callout("карамелизированный лук", "188px", "14px"),
-      callout("яйца", "120px", "18px"),
+      callout("сыр Чеддер", "130px", "18px"),
       callout("соус кочуджан-мэйо", "170px", undefined, {
         offsetY: -15,
         rayScale: 0.5,
@@ -77,13 +86,15 @@ const menuItems = [
     id: "shrimp",
     name: "креветка",
     title: "КРЕВЕТКА",
+    price: "550с",
     image: "assets/shrimp-hq.png",
     ingredients: [
-      callout("обжаренные креветки", "165px"),
+      callout("яйца", "100px", "18px"),
       callout("гуакамоле", "120px", "18px"),
-      callout("соус васаби-юдзу", "165px"),
-      callout("соус алоэ-трюфель", "160px"),
-      callout("яйца", "100px", "18px")
+      callout("обжаренные креветки", "165px"),
+      callout("сыр Чеддер", "130px"),
+      callout("соус кочуджан мэйо", "170px"),
+      callout("кунжут", "100px")
     ]
   }
 ];
@@ -399,19 +410,19 @@ const matchaItems = [
     name: "Матча алоэ-клауди",
     price: "450с",
     image: "assets/bar-matcha-aloe-cloudy.png",
-    imageWidth: "118px"
+    imageWidth: "235px"
   },
   {
     name: "Матча клубника",
     price: "450с",
     image: "assets/bar-matcha-strawberry.png",
-    imageWidth: "118px"
+    imageWidth: "235px"
   },
   {
     name: "Матча маракуйя-жасмин",
     price: "390с",
     image: "assets/bar-matcha-passion-jasmine.png",
-    imageWidth: "118px"
+    imageWidth: "235px"
   },
   {
     name: "Матча тоник персик",
@@ -596,6 +607,16 @@ let activeCategory = "home";
 let activeDetailId = null;
 let edgeSwipe = null;
 
+function syncPageTheme() {
+  const isCocktails = poster.classList.contains("is-cocktails");
+  document.documentElement.classList.toggle("is-cocktails-page", isCocktails);
+  document.body.classList.toggle("is-cocktails-page", isCocktails);
+}
+
+const pageThemeObserver = new MutationObserver(syncPageTheme);
+pageThemeObserver.observe(poster, { attributes: true, attributeFilter: ["class"] });
+syncPageTheme();
+
 function getCalloutLines(label) {
   return label
     .replace(/<br\s*\/?>/gi, "\n")
@@ -762,7 +783,7 @@ function renderToasts() {
         >
           <span class="menu-item-content">
             <img src="${item.image}" alt="" draggable="false" />
-            <span>${item.name}</span>
+            <span>${item.name}<br>${item.price}</span>
           </span>
         </button>
       `
@@ -787,7 +808,7 @@ function renderBreakfasts() {
           aria-label="${item.title}"
         >
           <img src="${item.image}" alt="" draggable="false" />
-          <span>${item.shortName}</span>
+          <span>${item.shortName}<br>${item.price}</span>
         </button>
       `
     )
@@ -811,7 +832,7 @@ function renderEvening() {
           aria-label="${item.title}"
         >
           <img src="${item.image}" alt="" draggable="false" />
-          <span>${item.shortName}</span>
+          <span>${item.shortName}<br>${item.price}</span>
         </button>
       `
     )
@@ -1340,9 +1361,17 @@ function positionCalloutRays() {
     if (!rayElement) return;
     const rayScale = clamp(Number.parseFloat(rayElement.dataset.rayScale) || 1, 0, 1);
     const rayTrim = Math.max(0, Number.parseFloat(rayElement.dataset.rayTrim) || 0);
-    const explicitRayLength = Number.parseFloat(rayElement.dataset.rayLength);
+    const isMobileCallout = window.matchMedia("(max-width: 420px)").matches;
+    const mobileRayLength = Number.parseFloat(rayElement.dataset.mobileRayLength);
+    const explicitRayLength = Number.parseFloat(
+      isMobileCallout && Number.isFinite(mobileRayLength)
+        ? rayElement.dataset.mobileRayLength
+        : rayElement.dataset.rayLength
+    );
     const explicitRayX = Number.parseFloat(rayElement.dataset.rayX);
     const explicitRayY = Number.parseFloat(rayElement.dataset.rayY);
+    const mobileLineX = Number.parseFloat(rayElement.dataset.mobileLineX);
+    const mobileLineY = Number.parseFloat(rayElement.dataset.mobileLineY);
     const rayOffsetX = Number.parseFloat(rayElement.dataset.rayOffsetX) || 0;
     const rayOffsetY = Number.parseFloat(rayElement.dataset.rayOffsetY) || 0;
     const rayEndX = ray.x1 + (ray.x2 - ray.x1) * rayScale;
@@ -1350,12 +1379,65 @@ function positionCalloutRays() {
     const calculatedLength = Math.max(0, Math.hypot(rayEndX - ray.x1, rayEndY - ray.y1) - rayTrim);
     const lineLength = Number.isFinite(explicitRayLength) ? Math.max(0, explicitRayLength) : calculatedLength;
     const lineRotate = Math.atan2(rayEndY - ray.y1, rayEndX - ray.x1) * (180 / Math.PI);
-    const lineX = Number.isFinite(explicitRayX) ? explicitRayX : ray.x1 + rayOffsetX;
-    const lineY = Number.isFinite(explicitRayY) ? explicitRayY : ray.y1 + rayOffsetY;
+    const lineX =
+      isMobileCallout && Number.isFinite(mobileLineX)
+        ? mobileLineX
+        : Number.isFinite(explicitRayX)
+          ? explicitRayX
+          : ray.x1 + rayOffsetX;
+    const lineY =
+      isMobileCallout && Number.isFinite(mobileLineY)
+        ? mobileLineY
+        : Number.isFinite(explicitRayY)
+          ? explicitRayY
+          : ray.y1 + rayOffsetY;
     rayElement.style.setProperty("--line-x", `${lineX}px`);
     rayElement.style.setProperty("--line-y", `${lineY}px`);
     rayElement.style.setProperty("--line-l", `${lineLength}px`);
     rayElement.style.setProperty("--line-r", `${lineRotate}deg`);
+  });
+}
+
+function resetDetailContentHeight() {
+  poster.style.removeProperty("--detail-content-height");
+}
+
+function getElementBottomWithinPoster(element, posterRect) {
+  const rect = element.getBoundingClientRect();
+  if (!rect.width && !rect.height) return 0;
+  return rect.bottom - posterRect.top;
+}
+
+function updateDetailContentHeight() {
+  if (!poster.classList.contains("is-detail")) return;
+
+  const posterRect = poster.getBoundingClientRect();
+  const measuredElements = [
+    posterTitle,
+    detailImage,
+    ...callouts.querySelectorAll(".callout, .callout-ray")
+  ];
+  const contentBottom = measuredElements.reduce(
+    (bottom, element) => Math.max(bottom, getElementBottomWithinPoster(element, posterRect)),
+    0
+  );
+  const bottomPadding = Math.max(28, Math.min(64, window.innerHeight * 0.07));
+  const nextHeight = Math.max(window.innerHeight, contentBottom + bottomPadding);
+
+  poster.style.setProperty("--detail-content-height", `${Math.ceil(nextHeight)}px`);
+}
+
+function runDetailLayoutPass() {
+  fitCalloutsToPoster();
+  prepareCalloutOrigins();
+  positionCalloutRays();
+  updateDetailContentHeight();
+}
+
+function settleDetailLayout() {
+  runDetailLayoutPass();
+  requestAnimationFrame(() => {
+    if (poster.classList.contains("is-detail")) runDetailLayoutPass();
   });
 }
 
@@ -1392,6 +1474,7 @@ function openToasts() {
   window.clearTimeout(zoomTimer);
   activeCategory = "toasts";
   activeDetailId = null;
+  resetDetailContentHeight();
   renderToasts();
   poster.classList.remove("is-home", "is-breakfasts", "is-evening", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-toasts");
@@ -1408,6 +1491,7 @@ function openBreakfasts() {
   window.clearTimeout(zoomTimer);
   activeCategory = "breakfasts";
   activeDetailId = null;
+  resetDetailContentHeight();
   renderBreakfasts();
   poster.classList.remove("is-home", "is-toasts", "is-evening", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-breakfasts");
@@ -1424,6 +1508,7 @@ function openEvening() {
   window.clearTimeout(zoomTimer);
   activeCategory = "evening";
   activeDetailId = null;
+  resetDetailContentHeight();
   renderEvening();
   poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-evening");
@@ -1440,6 +1525,7 @@ function openBar() {
   window.clearTimeout(zoomTimer);
   activeCategory = "bar";
   activeDetailId = null;
+  resetDetailContentHeight();
   renderBar();
   poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-evening", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-bar");
@@ -1456,6 +1542,7 @@ function openCocktails() {
   window.clearTimeout(zoomTimer);
   activeCategory = "cocktails";
   activeDetailId = null;
+  resetDetailContentHeight();
   renderCocktails();
   poster.classList.remove("is-home", "is-toasts", "is-breakfasts", "is-evening", "is-bar", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-cocktails");
@@ -1472,6 +1559,7 @@ function openHome() {
   window.clearTimeout(zoomTimer);
   activeCategory = "home";
   activeDetailId = null;
+  resetDetailContentHeight();
   poster.classList.remove("is-toasts", "is-breakfasts", "is-evening", "is-bar", "is-cocktails", "is-detail", "is-animating", "is-callout-ready");
   poster.classList.add("is-home");
   detailView.style.transition = "";
@@ -1487,6 +1575,7 @@ function openDetail(id, sourceButton) {
   if (!item) return;
   window.clearTimeout(zoomTimer);
   activeDetailId = id;
+  resetDetailContentHeight();
 
   posterTitle.textContent = item.title;
   detailImage.src = item.image;
@@ -1499,6 +1588,9 @@ function openDetail(id, sourceButton) {
           data-ray-scale="${ingredient.rayScale ?? 1}"
           data-ray-trim="${ingredient.rayTrim ?? 0}"
           data-ray-length="${ingredient.rayLength ?? ""}"
+          data-mobile-ray-length="${ingredient.mobileRayLength ?? ""}"
+          data-mobile-line-x="${ingredient.mobileLineX ?? ""}"
+          data-mobile-line-y="${ingredient.mobileLineY ?? ""}"
           data-ray-x="${ingredient.rayX ?? ""}"
           data-ray-y="${ingredient.rayY ?? ""}"
           data-ray-offset-x="${ingredient.rayOffsetX ?? 0}"
@@ -1537,9 +1629,7 @@ function openDetail(id, sourceButton) {
   detailView.style.transition = "none";
   detailView.style.transform = "translate(0, 0) scale(1)";
 
-  fitCalloutsToPoster();
-  prepareCalloutOrigins();
-  positionCalloutRays();
+  settleDetailLayout();
   poster.classList.add("is-callout-ready");
 
   requestAnimationFrame(() => {
@@ -1566,6 +1656,7 @@ function closeDetail() {
   window.clearTimeout(zoomTimer);
   activeDetailId = null;
   poster.classList.remove("is-detail");
+  resetDetailContentHeight();
   poster.classList.remove("is-animating");
   poster.classList.remove("is-callout-ready");
   detailView.style.transition = "";
@@ -1684,10 +1775,12 @@ document.addEventListener("keydown", (event) => {
 
 window.addEventListener("resize", () => {
   if (poster.classList.contains("is-detail")) {
-    fitCalloutsToPoster();
-    prepareCalloutOrigins();
-    positionCalloutRays();
+    settleDetailLayout();
   }
+});
+
+detailImage.addEventListener("load", () => {
+  if (poster.classList.contains("is-detail")) settleDetailLayout();
 });
 
 window.addEventListener("popstate", (event) => {

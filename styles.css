@@ -4,6 +4,13 @@
   --pearl: #f6f4f5;
   --page-bg:
     radial-gradient(circle at 50% 36%, var(--pearl) 0 34%, var(--rose) 84%, #ead8ce 100%);
+  --cocktail-page-bg:
+    radial-gradient(
+      ellipse 100% 100% at 50% 50%,
+      #705c4f 0%,
+      #937f6d 50%,
+      #b7a38b 100%
+    );
   --paper: #fbf7f4;
   --ink: #080708;
   --shadow: rgba(67, 48, 33, 0.2);
@@ -44,6 +51,12 @@ body {
   color: var(--ink);
   font-family: var(--font-display);
   font-weight: 500;
+}
+
+html.is-cocktails-page,
+body.is-cocktails-page,
+body.is-cocktails-page .site-shell {
+  background: var(--cocktail-page-bg) fixed;
 }
 
 button {
@@ -377,13 +390,7 @@ h1 {
   --shadow: var(--cocktail-shadow);
   width: min(100%, 440px);
   padding-inline: clamp(14px, 4.5vw, 20px);
-  background:
-    radial-gradient(
-      ellipse 100% 100% at 50% 50%,
-      #705c4f 0%,
-      #937f6d 50%,
-      #b7a38b 100%
-    );
+  background: transparent;
   color: var(--cocktail-cream);
 }
 
@@ -393,8 +400,8 @@ h1 {
 }
 
 .poster.is-cocktails .bar-page {
-  width: min(100%, 400px);
-  max-width: 400px;
+  width: 100%;
+  max-width: 500px;
   color: var(--cocktail-cream);
 }
 
@@ -512,76 +519,28 @@ h1 {
 }
 
 .poster.is-cocktails .cocktail-author-section .bar-drink-board {
-  position: relative;
-  display: block;
-  width: min(100%, 400px);
-  height: clamp(960px, 253vw, 1115px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: clamp(10px, 4vw, 28px);
+  row-gap: clamp(44px, 10vw, 68px);
+  align-items: start;
+  width: 100%;
+  max-width: 500px;
   margin: 0 auto;
+  padding-bottom: clamp(72px, 16vw, 110px);
 }
 
 .poster.is-cocktails .cocktail-author-section .bar-drink {
-  position: absolute;
-  width: 46%;
-  gap: 6px;
+  position: static;
+  width: auto;
+  gap: 10px;
   color: var(--cocktail-cream);
-  transform: translate(var(--part-x, 0px), var(--part-y, 0px));
-}
-
-.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(1) {
-  left: -10%;
-  top: 0;
-  width: 59%;
-}
-
-.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(2) {
-  right: 3%;
-  top: 8.6%;
-  width: 48%;
-}
-
-.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(3) {
-  left: 6%;
-  top: 24.7%;
-  width: 43%;
-}
-
-.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(4) {
-  right: 1%;
-  top: 33.5%;
-  width: 49%;
-}
-
-.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(5) {
-  left: -1%;
-  top: 45.6%;
-  width: 49%;
-}
-
-.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(6) {
-  right: 3%;
-  top: 56.5%;
-  width: 44%;
-}
-
-.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(7) {
-  left: 7%;
-  top: 68.1%;
-  width: 43%;
-}
-
-.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(8) {
-  right: 4%;
-  top: 80.8%;
-  width: 31%;
-}
-
-.poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(8) img {
-  transform: rotate(2deg);
+  transform: translate(var(--part-x, 0px), calc(var(--drop) + var(--part-y, 0px)));
 }
 
 .poster.is-cocktails .cocktail-author-section .bar-drink img {
   width: min(100%, var(--image-width, 205px));
-  padding-right: 0;
+  padding-right: 50px;
   filter: drop-shadow(12px 18px 13px var(--cocktail-shadow));
 }
 
@@ -806,7 +765,7 @@ h1 {
 }
 
 .poster.is-detail {
-  min-height: max(100svh, 920px);
+  min-height: max(100svh, var(--detail-content-height, 100svh));
   overflow: hidden;
 }
 
@@ -834,6 +793,10 @@ h1 {
 
 .poster.is-detail .detail-toast {
   transform: scale(1);
+}
+
+.poster.is-detail.is-cocktails #detailImage {
+  padding-right: 50px;
 }
 
 .poster.is-detail.is-callout-ready .callout {
@@ -877,6 +840,11 @@ h1 {
     row-gap: 42px;
   }
 
+  .poster.is-cocktails .cocktail-author-section .bar-drink-board {
+    column-gap: 4px;
+    row-gap: 42px;
+  }
+
   .breakfast-item img {
     width: min(100%, calc(var(--image-width, 205px) * 0.88));
   }
@@ -914,6 +882,25 @@ h1 {
   }
 
   .breakfast-item:nth-child(2n) {
+    --drop: 82px;
+  }
+
+  .poster.is-cocktails {
+    width: min(100%, 720px);
+    padding-inline: 46px;
+  }
+
+  .poster.is-cocktails .bar-page,
+  .poster.is-cocktails .cocktail-author-section .bar-drink-board {
+    max-width: 620px;
+  }
+
+  .poster.is-cocktails .cocktail-author-section .bar-drink-board {
+    column-gap: 54px;
+    row-gap: 74px;
+  }
+
+  .poster.is-cocktails .cocktail-author-section .bar-drink:nth-child(2n) {
     --drop: 82px;
   }
 
