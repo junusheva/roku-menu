@@ -11,19 +11,8 @@ const menuItems = [
       callout("консервированный тунец", "210px"),
       callout("греческий йогурт", "190px"),
       callout("кукуруза", "120px"),
-      callout("красный лук", "140px", undefined, {
-        offsetY: 16,
-        rayScale: 0.35,
-        mobileLineX: 132.061822,
-        mobileLineY: 595,
-        mobileRayLength: 20.01328
-      }),
-      callout("сыр Чеддер", "118px", undefined, {
-        mobileLineX: 94,
-        mobileLineY: 548,
-        mobileLineRotate: -35,
-        mobileRayLength: 10
-      })
+      callout("красный лук", "140px"),
+      callout("сыр Чеддер", "118px")
     ]
   },
   {
@@ -64,12 +53,7 @@ const menuItems = [
       callout("гуакамоле", "120px", "18px"),
       callout("творожный крем", "160px"),
       callout("кунжут", "100px"),
-      callout("зеленый лук", "130px", undefined, {
-        mobileLineX: 104,
-        mobileLineY: 296,
-        mobileLineRotate: -45,
-        mobileRayLength: 10
-      })
+      callout("зеленый лук", "130px")
     ]
   },
   {
@@ -83,11 +67,7 @@ const menuItems = [
       callout("бон филе", "132px", "18px"),
       callout("карамелизированный лук", "188px", "14px"),
       callout("сыр Чеддер", "130px", "18px"),
-      callout("соус кочуджан-мэйо", "170px", undefined, {
-        offsetY: -15,
-        rayScale: 0.5,
-        rayOffsetY: 5
-      })
+      callout("соус кочуджан-мэйо", "170px")
     ]
   },
   {
@@ -492,7 +472,7 @@ const coldDrinkItems = [
   {
     name: "Айс-ти жасмин-персик",
     price: "390с",
-    image: "assets/bar-espresso-tonic.png",
+    image: "assets/bar-iced-tea-jasmine-peach.png",
     imageWidth: "118px"
   }
 ];
@@ -607,6 +587,9 @@ const mainView = document.querySelector("#mainView");
 const menuView = document.querySelector("#menuView");
 const detailView = document.querySelector("#detailView");
 const detailImage = document.querySelector("#detailImage");
+const detailPrice = document.querySelector("#detailPrice");
+const detailPrev = document.querySelector("#detailPrev");
+const detailNext = document.querySelector("#detailNext");
 const callouts = document.querySelector("#callouts");
 const backButton = document.querySelector("#backButton");
 const logoButton = document.querySelector("#logoButton");
@@ -614,6 +597,7 @@ let zoomTimer;
 let activeCategory = "home";
 let activeDetailId = null;
 let edgeSwipe = null;
+let detailSwipe = null;
 const savedPageKey = "roku-menu-page";
 
 function syncPageTheme() {
@@ -830,7 +814,7 @@ function renderToasts() {
           aria-label="${item.title}"
         >
           <span class="menu-item-content">
-            <img src="${item.image}" alt="" draggable="false" />
+            <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
             <span>${item.name}<br>${item.price}</span>
           </span>
         </button>
@@ -855,7 +839,7 @@ function renderBreakfasts() {
           style="--image-width: ${item.imageWidth};"
           aria-label="${item.title}"
         >
-          <img src="${item.image}" alt="" draggable="false" />
+          <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
           <span>${item.shortName}<br>${item.price}</span>
         </button>
       `
@@ -879,7 +863,7 @@ function renderEvening() {
           style="--image-width: ${item.imageWidth};"
           aria-label="${item.title}"
         >
-          <img src="${item.image}" alt="" draggable="false" />
+          <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
           <span>${item.shortName}<br>${item.price}</span>
         </button>
       `
@@ -901,13 +885,13 @@ function renderBarDrinkSection(title, ariaLabel, items, options = {}) {
                 options.clickable
                   ? `
                 <button class="bar-drink bar-drink-button" type="button" data-id="${item.id}" style="--image-width: ${item.imageWidth};" aria-label="${item.title}">
-                  <img src="${item.image}" alt="" draggable="false" />
+                  <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
                   <span>${item.name}<br>${item.price}</span>
                 </button>
               `
                   : `
                 <article class="bar-drink" style="--image-width: ${item.imageWidth};">
-                  <img src="${item.image}" alt="" draggable="false" />
+                  <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
                   <span>${item.name}<br>${item.price}</span>
                 </article>
               `
@@ -1052,11 +1036,6 @@ function boxesOverlap(a, b) {
   return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
 }
 
-function overlapArea(a, b) {
-  if (!boxesOverlap(a, b)) return 0;
-  return (Math.min(a.right, b.right) - Math.max(a.left, b.left)) * (Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
-}
-
 function lineIntersectsBox(line, box) {
   const { x1, y1, x2, y2 } = line;
   const dx = x2 - x1;
@@ -1151,67 +1130,6 @@ function expandBox(box, gap) {
   };
 }
 
-function getBalancedCalloutAngle(index, total) {
-  const upperCount = Math.ceil(total / 2);
-  const isUpper = index < upperCount;
-  const arcIndex = isUpper ? index : index - upperCount;
-  const arcTotal = isUpper ? upperCount : total - upperCount;
-  const arcStart = isUpper ? (-Math.PI * 3) / 4 : Math.PI / 4;
-  const arcEnd = isUpper ? -Math.PI / 4 : (Math.PI * 3) / 4;
-
-  if (arcTotal <= 1) return isUpper ? -Math.PI / 2 : Math.PI / 2;
-  return arcStart + ((arcEnd - arcStart) * arcIndex) / (arcTotal - 1);
-}
-
-function getRadialCandidates(angle, step, centerX, centerY, radiusX, radiusY, width, height) {
-  const angleNudges = [0, -step * 0.32, step * 0.32, -step * 0.62, step * 0.62];
-  const radiusScales = [1, 1.12, 0.88, 1.25, 0.76];
-  const candidates = [];
-  const addCandidate = (candidateAngle, radiusScale) => {
-    const labelCenterX = centerX + Math.cos(candidateAngle) * radiusX * radiusScale;
-    const labelCenterY = centerY + Math.sin(candidateAngle) * radiusY * radiusScale;
-    candidates.push([labelCenterX - width / 2, labelCenterY - height / 2]);
-  };
-
-  angleNudges.forEach((angleNudge) => {
-    radiusScales.forEach((radiusScale) => {
-      addCandidate(angle + angleNudge, radiusScale);
-    });
-  });
-
-  const fallbackSlots = Math.max(Math.round((Math.PI * 2) / step) * 3, 18);
-  for (let slot = 0; slot < fallbackSlots; slot += 1) {
-    const fallbackAngle = -Math.PI / 2 + (slot / fallbackSlots) * Math.PI * 2;
-    addCandidate(fallbackAngle, 1);
-    addCandidate(fallbackAngle, 1.22);
-  }
-
-  return candidates;
-}
-
-function addEdgeCandidates(candidates, minLeft, maxLeft, minTop, maxTop, safeImage, width, height, gap) {
-  const xs = [minLeft, (minLeft + maxLeft) / 2, maxLeft];
-  const ys = [
-    minTop,
-    Math.max(minTop, safeImage.top - height - gap),
-    Math.min(maxTop, safeImage.bottom + gap),
-    maxTop
-  ];
-
-  xs.forEach((x) => ys.forEach((y) => candidates.push([x, y])));
-  [minTop, maxTop].forEach((y) => {
-    for (let step = 0; step <= 8; step += 1) {
-      candidates.push([minLeft + ((maxLeft - minLeft) * step) / 8, y]);
-    }
-  });
-
-  [minLeft, maxLeft].forEach((x) => {
-    for (let step = 0; step <= 8; step += 1) {
-      candidates.push([x, minTop + ((maxTop - minTop) * step) / 8]);
-    }
-  });
-}
-
 function getRaySegment(box, centerX, centerY, halfImageWidth, halfImageHeight, labelGap) {
   const labelCenterX = box.left + (box.right - box.left) / 2;
   const labelCenterY = box.top + (box.bottom - box.top) / 2;
@@ -1242,8 +1160,6 @@ function getRaySegment(box, centerX, centerY, halfImageWidth, halfImageHeight, l
 function clipRayToLabelBoxes(ray, boxes, gap) {
   const expandedBoxes = boxes.map((box) => expandBox(box, gap));
   const distance = Math.hypot(ray.x2 - ray.x1, ray.y2 - ray.y1) || 1;
-  const unitX = (ray.x2 - ray.x1) / distance;
-  const unitY = (ray.y2 - ray.y1) / distance;
   let clippedRay = ray;
   let closestDistance = distance;
 
@@ -1257,102 +1173,123 @@ function clipRayToLabelBoxes(ray, boxes, gap) {
     closestDistance = entryDistance;
     clippedRay = {
       ...ray,
-      x2: entry.x - unitX * gap,
-      y2: entry.y - unitY * gap
+      x2: entry.x,
+      y2: entry.y
     };
   });
 
   return clippedRay;
 }
 
+function getResponsiveCalloutAngle(index, total) {
+  const upperCount = Math.ceil(total / 2);
+  const upper = index < upperCount;
+  const position = upper ? index : index - upperCount;
+  const count = upper ? upperCount : total - upperCount;
+  const start = upper ? (-Math.PI * 5) / 6 : Math.PI / 6;
+  const end = upper ? -Math.PI / 6 : (Math.PI * 5) / 6;
+  return count <= 1 ? (upper ? -Math.PI / 2 : Math.PI / 2) : start + ((end - start) * position) / (count - 1);
+}
+
+function makeCalloutBox(left, top, width, height) {
+  return { left, top, right: left + width, bottom: top + height };
+}
+
 function fitCalloutsToPoster() {
   const posterRect = poster.getBoundingClientRect();
   const imageRect = detailImage.getBoundingClientRect();
   const titleRect = posterTitle.getBoundingClientRect();
-  const padding = 8;
-  const imageGap = 42;
-  const labelGap = 18;
-  const occupiedBoxes = [];
-  const occupiedRays = [];
+  const priceRect = detailPrice.getBoundingClientRect();
   const calloutElements = [...callouts.querySelectorAll(".callout")];
-  const posterBox = {
-    width: posterRect.width,
-    height: posterRect.height
-  };
+  const mobile = posterRect.width < 600;
+  const tablet = posterRect.width >= 600 && posterRect.width < 960;
+  const edgePadding = mobile ? 10 : tablet ? 22 : 34;
+  const labelGap = mobile ? 12 : 16;
+  const imageGap = mobile ? 15 : tablet ? 22 : 28;
+  const lineImageGap = imageGap;
+  const lineLabelGap = mobile ? 8 : 10;
   const centerX = imageRect.left - posterRect.left + imageRect.width / 2;
   const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
-  const headerGap = Math.max(44, posterBox.height * 0.045);
-  const headerBottom = titleRect.bottom - posterRect.top + headerGap;
-  const angleStep = Math.PI / Math.max(Math.ceil(calloutElements.length / 2), 2);
-  const lineImageGap = 18;
+  const imageBox = {
+    left: imageRect.left - posterRect.left,
+    right: imageRect.right - posterRect.left,
+    top: imageRect.top - posterRect.top,
+    bottom: imageRect.bottom - posterRect.top
+  };
+  const safeImage = expandBox(imageBox, imageGap);
+  const headerBottom = Math.max(titleRect.bottom, priceRect.bottom) - posterRect.top + (mobile ? 14 : 22);
+  const estimatedRows = Math.max(2, Math.ceil(calloutElements.length / (mobile ? 2 : 3)));
+  const layoutBottom = Math.max(
+    window.innerHeight,
+    safeImage.bottom + estimatedRows * (mobile ? 72 : 82) + 48
+  );
   const halfImageWidth = imageRect.width / 2 + lineImageGap;
   const halfImageHeight = imageRect.height / 2 + lineImageGap;
-  const safeImage = {
-    left: imageRect.left - posterRect.left - imageGap,
-    right: imageRect.right - posterRect.left + imageGap,
-    top: imageRect.top - posterRect.top - imageGap,
-    bottom: imageRect.bottom - posterRect.top + imageGap
-  };
+  const occupiedBoxes = [];
+  const occupiedRays = [];
+  const placements = new Array(calloutElements.length);
+  const placementOrder = calloutElements.map((element, index) => ({ element, index }));
 
-  calloutElements.forEach((calloutElement, index) => {
+  placementOrder.forEach(({ element: calloutElement, index }) => {
     const width = calloutElement.offsetWidth;
     const height = calloutElement.offsetHeight;
-    const minLeft = padding;
-    const maxLeft = posterBox.width - width - padding;
-    const minTop = Math.max(padding, headerBottom);
-    const maxTop = posterBox.height - height - padding;
-    const angle = getBalancedCalloutAngle(index, calloutElements.length);
-    const expectedSide = Math.sin(angle) < 0 ? "upper" : "lower";
-    const radiusX = Math.max(imageRect.width / 2 + width / 2 + 54, posterBox.width * 0.34);
-    const radiusY = Math.max(imageRect.height / 2 + height / 2 + 92, posterBox.height * 0.24);
-    const desiredLeft = centerX + Math.cos(angle) * radiusX - width / 2;
-    const desiredTop = centerY + Math.sin(angle) * radiusY - height / 2;
-    const candidates = getRadialCandidates(angle, angleStep, centerX, centerY, radiusX, radiusY, width, height);
-    addEdgeCandidates(candidates, minLeft, maxLeft, minTop, maxTop, safeImage, width, height, labelGap);
-    let best = { left: clamp(desiredLeft, minLeft, maxLeft), top: clamp(desiredTop, minTop, maxTop), score: Number.POSITIVE_INFINITY };
-    let bestClean = { ...best };
+    const angle = getResponsiveCalloutAngle(index, calloutElements.length);
+    const desiredRadiusX = imageRect.width / 2 + width / 2 + (mobile ? 42 : 72);
+    const desiredRadiusY = imageRect.height / 2 + height / 2 + (mobile ? 58 : 86);
+    const desiredLeft = centerX + Math.cos(angle) * desiredRadiusX - width / 2;
+    const desiredTop = centerY + Math.sin(angle) * desiredRadiusY - height / 2;
+    const candidates = [];
+    const relaxedCandidates = [];
+    const xStep = mobile ? 6 : 10;
+    const yStep = mobile ? 6 : 10;
+    const maxLeft = posterRect.width - edgePadding - width;
+    const maxTop = layoutBottom - edgePadding - height;
 
-    candidates.forEach(([candidateLeft, candidateTop]) => {
-      const left = clamp(candidateLeft, minLeft, maxLeft);
-      const top = clamp(candidateTop, minTop, maxTop);
-      const box = { left, top, right: left + width, bottom: top + height };
-      const spacedBox = expandBox(box, labelGap);
-      const ray = getRaySegment(box, centerX, centerY, halfImageWidth, halfImageHeight, labelGap);
-      const candidateCenterY = top + height / 2;
-      const rayCrossesLabel =
-        occupiedBoxes.some((occupiedBox) => lineIntersectsBox(ray, occupiedBox)) ||
-        occupiedRays.some((occupiedRay) => lineIntersectsBox(occupiedRay, spacedBox));
-      const rayCrossesRay = occupiedRays.some((occupiedRay) => linesIntersect(ray, occupiedRay));
-      const overlapsLabel = occupiedBoxes.some((occupiedBox) => boxesOverlap(spacedBox, occupiedBox));
-      const distance = Math.hypot(left - desiredLeft, top - desiredTop);
-      const collisionPenalty = overlapArea(box, safeImage) * 10000;
-      const wrongSidePenalty =
-        (expectedSide === "upper" && candidateCenterY > centerY - height / 2) ||
-        (expectedSide === "lower" && candidateCenterY < centerY + height / 2)
-          ? 2500000
-          : 0;
-      const labelCollisionPenalty = occupiedBoxes.reduce(
-        (penalty, occupiedBox) => penalty + overlapArea(spacedBox, occupiedBox) * 50000 + (boxesOverlap(spacedBox, occupiedBox) ? 1000000 : 0),
-        0
-      );
-      const rayCollisionPenalty = (rayCrossesLabel ? 5000000 : 0) + (rayCrossesRay ? 1500000 : 0);
-      const score = distance + wrongSidePenalty + collisionPenalty + labelCollisionPenalty + rayCollisionPenalty;
-      const cleanScore = distance + wrongSidePenalty + collisionPenalty + labelCollisionPenalty;
+    for (let top = headerBottom; top <= maxTop; top += yStep) {
+      for (let left = edgePadding; left <= maxLeft; left += xStep) {
+        const box = makeCalloutBox(left, top, width, height);
+        if (boxesOverlap(box, safeImage)) continue;
+        const spacedBox = expandBox(box, labelGap);
+        if (occupiedBoxes.some((occupiedBox) => boxesOverlap(spacedBox, occupiedBox))) continue;
+        const ray = getRaySegment(box, centerX, centerY, halfImageWidth, halfImageHeight, lineLabelGap);
+        const rayLength = Math.hypot(ray.x2 - ray.x1, ray.y2 - ray.y1);
+        if (rayLength < 8) continue;
+        const rayCrossesLabel = occupiedBoxes.some((occupiedBox) => lineIntersectsBox(ray, occupiedBox));
+        const labelCrossesRay = occupiedRays.some((occupiedRay) => lineIntersectsBox(occupiedRay, spacedBox));
 
-      if (score < best.score) best = { left, top, score };
-      if (!overlapsLabel && !rayCrossesLabel && !rayCrossesRay && cleanScore < bestClean.score) {
-        bestClean = { left, top, score: cleanScore };
+        const candidateCenterY = top + height / 2;
+        const expectedUpper = Math.sin(angle) < 0;
+        const wrongBand = expectedUpper ? candidateCenterY >= safeImage.top : candidateCenterY <= safeImage.bottom;
+        const angularDistance = Math.abs(Math.atan2(candidateCenterY - centerY, left + width / 2 - centerX) - angle);
+        const rayCrossings = occupiedRays.filter((occupiedRay) => linesIntersect(ray, occupiedRay)).length;
+        const score =
+          Math.hypot(left - desiredLeft, top - desiredTop) +
+          angularDistance * 180 +
+          (wrongBand ? 2400 : 0) +
+          (rayCrossesLabel ? 6000 : 0) +
+          (labelCrossesRay ? 6000 : 0) +
+          rayCrossings * 800 +
+          Math.max(0, top - safeImage.bottom) * 0.08;
+        const candidate = { left, top, box, ray, score };
+        relaxedCandidates.push(candidate);
+        if (!rayCrossesLabel && !labelCrossesRay) candidates.push(candidate);
       }
-    });
+    }
 
-    if (bestClean.score < Number.POSITIVE_INFINITY) best = bestClean;
-    const offsetY = Number.parseFloat(calloutElement.dataset.offsetY) || 0;
-    best.top = clamp(best.top + offsetY, minTop, maxTop);
-    calloutElement.style.left = `${best.left}px`;
-    calloutElement.style.top = `${best.top}px`;
-    const placedBox = { left: best.left, top: best.top, right: best.left + width, bottom: best.top + height };
-    occupiedBoxes.push(expandBox(placedBox, labelGap));
-    occupiedRays.push(getRaySegment(placedBox, centerX, centerY, halfImageWidth, halfImageHeight, labelGap));
+    candidates.sort((a, b) => a.score - b.score);
+    relaxedCandidates.sort((a, b) => a.score - b.score);
+    const best = candidates[0] ?? relaxedCandidates[0];
+    if (!best) return;
+    placements[index] = best;
+    occupiedBoxes.push(expandBox(best.box, labelGap));
+    occupiedRays.push(best.ray);
+  });
+
+  calloutElements.forEach((calloutElement, index) => {
+    const placement = placements[index];
+    if (!placement) return;
+    calloutElement.style.left = `${placement.left}px`;
+    calloutElement.style.top = `${placement.top}px`;
   });
 }
 
@@ -1375,8 +1312,9 @@ function positionCalloutRays() {
   const imageRect = detailImage.getBoundingClientRect();
   const centerX = imageRect.left - posterRect.left + imageRect.width / 2;
   const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
-  const imageGap = 18;
-  const labelGap = 18;
+  const mobile = posterRect.width < 600;
+  const imageGap = mobile ? 15 : posterRect.width < 960 ? 22 : 28;
+  const labelGap = mobile ? 8 : 10;
   const halfImageWidth = imageRect.width / 2 + imageGap;
   const halfImageHeight = imageRect.height / 2 + imageGap;
   const calloutElements = [...callouts.querySelectorAll(".callout")];
@@ -1407,42 +1345,10 @@ function positionCalloutRays() {
     const rayElement = rayElements[index];
 
     if (!rayElement) return;
-    const rayScale = clamp(Number.parseFloat(rayElement.dataset.rayScale) || 1, 0, 1);
-    const rayTrim = Math.max(0, Number.parseFloat(rayElement.dataset.rayTrim) || 0);
-    const isMobileCallout = window.matchMedia("(max-width: 420px)").matches;
-    const mobileRayLength = Number.parseFloat(rayElement.dataset.mobileRayLength);
-    const explicitRayLength = Number.parseFloat(
-      isMobileCallout && Number.isFinite(mobileRayLength)
-        ? rayElement.dataset.mobileRayLength
-        : rayElement.dataset.rayLength
-    );
-    const explicitRayX = Number.parseFloat(rayElement.dataset.rayX);
-    const explicitRayY = Number.parseFloat(rayElement.dataset.rayY);
-    const mobileLineX = Number.parseFloat(rayElement.dataset.mobileLineX);
-    const mobileLineY = Number.parseFloat(rayElement.dataset.mobileLineY);
-    const mobileLineRotate = Number.parseFloat(rayElement.dataset.mobileLineRotate);
-    const rayOffsetX = Number.parseFloat(rayElement.dataset.rayOffsetX) || 0;
-    const rayOffsetY = Number.parseFloat(rayElement.dataset.rayOffsetY) || 0;
-    const rayEndX = ray.x1 + (ray.x2 - ray.x1) * rayScale;
-    const rayEndY = ray.y1 + (ray.y2 - ray.y1) * rayScale;
-    const calculatedLength = Math.max(0, Math.hypot(rayEndX - ray.x1, rayEndY - ray.y1) - rayTrim);
-    const lineLength = Number.isFinite(explicitRayLength) ? Math.max(0, explicitRayLength) : calculatedLength;
-    const calculatedRotate = Math.atan2(rayEndY - ray.y1, rayEndX - ray.x1) * (180 / Math.PI);
-    const lineRotate = isMobileCallout && Number.isFinite(mobileLineRotate) ? mobileLineRotate : calculatedRotate;
-    const lineX =
-      isMobileCallout && Number.isFinite(mobileLineX)
-        ? mobileLineX
-        : Number.isFinite(explicitRayX)
-          ? explicitRayX
-          : ray.x1 + rayOffsetX;
-    const lineY =
-      isMobileCallout && Number.isFinite(mobileLineY)
-        ? mobileLineY
-        : Number.isFinite(explicitRayY)
-          ? explicitRayY
-          : ray.y1 + rayOffsetY;
-    rayElement.style.setProperty("--line-x", `${lineX}px`);
-    rayElement.style.setProperty("--line-y", `${lineY}px`);
+    const lineLength = Math.max(0, Math.hypot(ray.x2 - ray.x1, ray.y2 - ray.y1));
+    const lineRotate = Math.atan2(ray.y2 - ray.y1, ray.x2 - ray.x1) * (180 / Math.PI);
+    rayElement.style.setProperty("--line-x", `${ray.x1}px`);
+    rayElement.style.setProperty("--line-y", `${ray.y1}px`);
     rayElement.style.setProperty("--line-l", `${lineLength}px`);
     rayElement.style.setProperty("--line-r", `${lineRotate}deg`);
   });
@@ -1464,14 +1370,15 @@ function updateDetailContentHeight() {
   const posterRect = poster.getBoundingClientRect();
   const measuredElements = [
     posterTitle,
+    detailPrice,
     detailImage,
-    ...callouts.querySelectorAll(".callout, .callout-ray")
+    ...callouts.querySelectorAll(".callout")
   ];
   const contentBottom = measuredElements.reduce(
     (bottom, element) => Math.max(bottom, getElementBottomWithinPoster(element, posterRect)),
     0
   );
-  const bottomPadding = Math.max(28, Math.min(64, window.innerHeight * 0.07));
+  const bottomPadding = Math.max(20, Math.min(36, window.innerHeight * 0.04));
   const nextHeight = Math.max(window.innerHeight, contentBottom + bottomPadding);
 
   poster.style.setProperty("--detail-content-height", `${Math.ceil(nextHeight)}px`);
@@ -1485,6 +1392,7 @@ function runDetailLayoutPass() {
 }
 
 function settleDetailLayout() {
+  resetDetailContentHeight();
   runDetailLayoutPass();
   requestAnimationFrame(() => {
     if (poster.classList.contains("is-detail")) runDetailLayoutPass();
@@ -1628,30 +1536,22 @@ function openDetail(id, sourceButton) {
   resetDetailContentHeight();
 
   posterTitle.textContent = item.title;
+  detailPrice.textContent = item.price || "";
+  detailImage.loading = "eager";
   detailImage.src = item.image;
   detailImage.alt = item.title;
+  detailImage.fetchPriority = "high";
   callouts.innerHTML = item.ingredients
     .map(
       (ingredient, index) => `
         <span
           class="callout-ray"
-          data-ray-scale="${ingredient.rayScale ?? 1}"
-          data-ray-trim="${ingredient.rayTrim ?? 0}"
-          data-ray-length="${ingredient.rayLength ?? ""}"
-          data-mobile-ray-length="${ingredient.mobileRayLength ?? ""}"
-          data-mobile-line-x="${ingredient.mobileLineX ?? ""}"
-          data-mobile-line-y="${ingredient.mobileLineY ?? ""}"
-          data-mobile-line-rotate="${ingredient.mobileLineRotate ?? ""}"
-          data-ray-x="${ingredient.rayX ?? ""}"
-          data-ray-y="${ingredient.rayY ?? ""}"
-          data-ray-offset-x="${ingredient.rayOffsetX ?? 0}"
-          data-ray-offset-y="${ingredient.rayOffsetY ?? 0}"
           style="--delay: ${120 + index * 55}ms;"
           aria-hidden="true"
         ></span>
         <div
           class="callout"
-          data-offset-y="${ingredient.offsetY ?? 0}"
+          role="listitem"
           style="
             --box: ${ingredient.box};
             --size: ${ingredient.size};
@@ -1682,6 +1582,10 @@ function openDetail(id, sourceButton) {
 
   settleDetailLayout();
   poster.classList.add("is-callout-ready");
+  const detailItems = getActiveItems();
+  const hasAdjacentItems = detailItems.length > 1;
+  detailPrev.hidden = !hasAdjacentItems;
+  detailNext.hidden = !hasAdjacentItems;
 
   requestAnimationFrame(() => {
     detailView.style.transition = "";
@@ -1703,6 +1607,22 @@ function openDetail(id, sourceButton) {
   zoomTimer = window.setTimeout(finishZoom, 1050);
 }
 
+function navigateDetail(direction) {
+  if (!poster.classList.contains("is-detail")) return;
+  const items = getActiveItems();
+  const currentIndex = items.findIndex((item) => item.id === activeDetailId);
+  if (currentIndex < 0 || items.length < 2) return;
+  const nextIndex = (currentIndex + direction + items.length) % items.length;
+  const nextItem = items[nextIndex];
+  detailView.classList.remove("is-turning-prev", "is-turning-next");
+  detailView.classList.add(direction < 0 ? "is-turning-prev" : "is-turning-next");
+  openDetail(nextItem.id, null);
+  pushHistoryState(activeCategory, nextItem.id);
+  window.setTimeout(() => {
+    detailView.classList.remove("is-turning-prev", "is-turning-next");
+  }, 460);
+}
+
 function closeDetail() {
   window.clearTimeout(zoomTimer);
   activeDetailId = null;
@@ -1712,6 +1632,7 @@ function closeDetail() {
   poster.classList.remove("is-callout-ready");
   detailView.style.transition = "";
   detailView.style.transform = "";
+  detailView.classList.remove("is-turning-prev", "is-turning-next");
   document.querySelectorAll(".is-zoom-source").forEach((item) => item.classList.remove("is-zoom-source"));
   resetMenuParting();
   detailView.setAttribute("aria-hidden", "true");
@@ -1735,6 +1656,7 @@ function goBack() {
 }
 
 function handleEdgeSwipeStart(event) {
+  if (poster.classList.contains("is-detail")) return;
   if (event.touches.length !== 1) return;
   const touch = event.touches[0];
   if (touch.clientX > 36) {
@@ -1747,6 +1669,33 @@ function handleEdgeSwipeStart(event) {
     startY: touch.clientY,
     isHorizontal: false
   };
+}
+
+function handleDetailSwipeStart(event) {
+  if (!poster.classList.contains("is-detail") || event.touches.length !== 1) return;
+  const touch = event.touches[0];
+  detailSwipe = { startX: touch.clientX, startY: touch.clientY, isHorizontal: false };
+}
+
+function handleDetailSwipeMove(event) {
+  if (!detailSwipe || event.touches.length !== 1) return;
+  const touch = event.touches[0];
+  const deltaX = touch.clientX - detailSwipe.startX;
+  const deltaY = Math.abs(touch.clientY - detailSwipe.startY);
+  if (Math.abs(deltaX) > 12 && Math.abs(deltaX) > deltaY) {
+    detailSwipe.isHorizontal = true;
+    event.preventDefault();
+  }
+}
+
+function handleDetailSwipeEnd(event) {
+  if (!detailSwipe) return;
+  const touch = event.changedTouches[0];
+  const deltaX = touch.clientX - detailSwipe.startX;
+  const deltaY = Math.abs(touch.clientY - detailSwipe.startY);
+  const shouldNavigate = detailSwipe.isHorizontal && Math.abs(deltaX) >= 55 && Math.abs(deltaX) > deltaY * 1.35;
+  detailSwipe = null;
+  if (shouldNavigate) navigateDetail(deltaX < 0 ? 1 : -1);
 }
 
 function handleEdgeSwipeMove(event) {
@@ -1801,6 +1750,16 @@ backButton.addEventListener("click", goBack);
 
 logoButton.addEventListener("click", navigateHome);
 
+detailPrev.addEventListener("click", () => navigateDetail(-1));
+detailNext.addEventListener("click", () => navigateDetail(1));
+
+detailView.addEventListener("touchstart", handleDetailSwipeStart, { passive: true });
+detailView.addEventListener("touchmove", handleDetailSwipeMove, { passive: false });
+detailView.addEventListener("touchend", handleDetailSwipeEnd);
+detailView.addEventListener("touchcancel", () => {
+  detailSwipe = null;
+});
+
 document.addEventListener("touchstart", handleEdgeSwipeStart, { passive: true });
 document.addEventListener("touchmove", handleEdgeSwipeMove, { passive: false });
 document.addEventListener("touchend", handleEdgeSwipeEnd);
@@ -1809,6 +1768,18 @@ document.addEventListener("touchcancel", () => {
 });
 
 document.addEventListener("keydown", (event) => {
+  if (poster.classList.contains("is-detail") && window.matchMedia("(min-width: 720px)").matches) {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      navigateDetail(-1);
+      return;
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      navigateDetail(1);
+      return;
+    }
+  }
   if (event.key === "Escape") {
     if (poster.classList.contains("is-detail")) {
       goBack();
@@ -1833,6 +1804,24 @@ window.addEventListener("resize", () => {
 detailImage.addEventListener("load", () => {
   if (poster.classList.contains("is-detail")) settleDetailLayout();
 });
+
+callouts.addEventListener("transitionend", (event) => {
+  if (event.target.classList?.contains("callout") && event.propertyName === "transform") {
+    updateDetailContentHeight();
+  }
+});
+
+posterTitle.addEventListener("transitionend", (event) => {
+  if (poster.classList.contains("is-detail") && (event.propertyName === "font-size" || event.propertyName === "transform")) {
+    settleDetailLayout();
+  }
+});
+
+if (document.fonts?.ready) {
+  document.fonts.ready.then(() => {
+    if (poster.classList.contains("is-detail")) settleDetailLayout();
+  });
+}
 
 window.addEventListener("popstate", (event) => {
   const state = normalizePageState(event.state) ?? getHistoryState("home", null);

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Roku Menu</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=7" />
   </head>
   <body>
     <main class="site-shell">
@@ -27,17 +27,31 @@
 
         <h1 id="posterTitle">ТОСТЫ</h1>
 
+        <p class="detail-price" id="detailPrice" aria-live="polite"></p>
+
         <div class="menu-view" id="menuView" aria-label="Меню тостов"></div>
 
         <div class="detail-view" id="detailView" aria-hidden="true">
           <div class="toast-stage">
-            <img class="detail-toast" id="detailImage" src="assets/tuna-hq.png" alt="" draggable="false" />
+            <img
+              class="detail-toast"
+              id="detailImage"
+              src="assets/tuna-hq.png"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+            />
           </div>
-          <div class="callouts" id="callouts"></div>
+          <div class="callouts" id="callouts" role="list" aria-label="Ингредиенты"></div>
+          <nav class="detail-navigation" aria-label="Навигация по блюдам">
+            <button class="detail-arrow detail-arrow-prev" id="detailPrev" type="button" aria-label="Предыдущее блюдо">‹</button>
+            <button class="detail-arrow detail-arrow-next" id="detailNext" type="button" aria-label="Следующее блюдо">›</button>
+          </nav>
         </div>
       </section>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=4"></script>
   </body>
 </html>
