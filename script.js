@@ -64,7 +64,12 @@ const menuItems = [
       callout("гуакамоле", "120px", "18px"),
       callout("творожный крем", "160px"),
       callout("кунжут", "100px"),
-      callout("зеленый лук", "130px")
+      callout("зеленый лук", "130px", undefined, {
+        mobileLineX: 104,
+        mobileLineY: 296,
+        mobileLineRotate: -45,
+        mobileRayLength: 10
+      })
     ]
   },
   {
@@ -609,6 +614,7 @@ let zoomTimer;
 let activeCategory = "home";
 let activeDetailId = null;
 let edgeSwipe = null;
+const savedPageKey = "roku-menu-page";
 
 function syncPageTheme() {
   const isCocktails = poster.classList.contains("is-cocktails");
@@ -681,6 +687,7 @@ function detailCallouts(labels, optionsByIndex = {}) {
 function getActiveItems() {
   if (activeCategory === "breakfasts") return breakfastItems;
   if (activeCategory === "evening") return eveningItems;
+  if (activeCategory === "bar") return [...barDrinkItems, ...matchaItems, ...coldDrinkItems, ...detoxItems];
   if (activeCategory === "cocktails") return cocktailItems;
   return menuItems;
 }
@@ -701,6 +708,41 @@ function getHistoryState(category = activeCategory, detail = activeDetailId) {
   };
 }
 
+function normalizePageState(state) {
+  const categoryItems = {
+    toasts: menuItems,
+    breakfasts: breakfastItems,
+    evening: eveningItems,
+    bar: [...barDrinkItems, ...matchaItems, ...coldDrinkItems, ...detoxItems],
+    cocktails: cocktailItems
+  };
+
+  if (!state || typeof state !== "object") return null;
+  if (state.category === "home") return getHistoryState("home", null);
+  if (!Object.hasOwn(categoryItems, state.category)) return null;
+
+  const detail = typeof state.detail === "string" && categoryItems[state.category].some((item) => item.id === state.detail)
+    ? state.detail
+    : null;
+  return getHistoryState(state.category, detail);
+}
+
+function savePageState(state) {
+  try {
+    window.localStorage.setItem(savedPageKey, JSON.stringify(state));
+  } catch {
+    // Navigation still works when storage is unavailable (for example in private mode).
+  }
+}
+
+function loadPageState() {
+  try {
+    return normalizePageState(JSON.parse(window.localStorage.getItem(savedPageKey)));
+  } catch {
+    return null;
+  }
+}
+
 function isSameHistoryState(nextState) {
   const currentState = window.history.state;
   return (
@@ -712,13 +754,16 @@ function isSameHistoryState(nextState) {
 
 function pushHistoryState(category = activeCategory, detail = activeDetailId) {
   const nextState = getHistoryState(category, detail);
+  savePageState(nextState);
   if (!isSameHistoryState(nextState)) {
     window.history.pushState(nextState, "");
   }
 }
 
 function replaceHistoryState(category = activeCategory, detail = activeDetailId) {
-  window.history.replaceState(getHistoryState(category, detail), "");
+  const nextState = getHistoryState(category, detail);
+  savePageState(nextState);
+  window.history.replaceState(nextState, "");
 }
 
 function openCategory(category) {
@@ -1790,8 +1835,11 @@ detailImage.addEventListener("load", () => {
 });
 
 window.addEventListener("popstate", (event) => {
-  applyHistoryState(event.state);
+  const state = normalizePageState(event.state) ?? getHistoryState("home", null);
+  applyHistoryState(state);
+  savePageState(state);
 });
 
-renderToasts();
-replaceHistoryState("home");
+const initialPageState = normalizePageState(window.history.state) ?? loadPageState() ?? getHistoryState("home", null);
+applyHistoryState(initialPageState);
+replaceHistoryState(initialPageState.category, initialPageState.detail);
