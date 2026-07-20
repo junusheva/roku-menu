@@ -684,10 +684,11 @@ function getActiveTitle() {
   return "ТОСТЫ";
 }
 
-function getHistoryState(category = activeCategory, detail = activeDetailId) {
+function getHistoryState(category = activeCategory, detail = activeDetailId, hasParent = false) {
   return {
     rokuMenu: true,
     category,
+    hasParent,
     ...(detail ? { detail } : {})
   };
 }
@@ -702,13 +703,14 @@ function normalizePageState(state) {
   };
 
   if (!state || typeof state !== "object") return null;
-  if (state.category === "home") return getHistoryState("home", null);
+  const hasParent = state.hasParent === true;
+  if (state.category === "home") return getHistoryState("home", null, hasParent);
   if (!Object.hasOwn(categoryItems, state.category)) return null;
 
   const detail = typeof state.detail === "string" && categoryItems[state.category].some((item) => item.id === state.detail)
     ? state.detail
     : null;
-  return getHistoryState(state.category, detail);
+  return getHistoryState(state.category, detail, hasParent);
 }
 
 function savePageState(state) {
@@ -737,7 +739,7 @@ function isSameHistoryState(nextState) {
 }
 
 function pushHistoryState(category = activeCategory, detail = activeDetailId) {
-  const nextState = getHistoryState(category, detail);
+  const nextState = getHistoryState(category, detail, true);
   savePageState(nextState);
   if (!isSameHistoryState(nextState)) {
     window.history.pushState(nextState, "");
@@ -745,7 +747,7 @@ function pushHistoryState(category = activeCategory, detail = activeDetailId) {
 }
 
 function replaceHistoryState(category = activeCategory, detail = activeDetailId) {
-  const nextState = getHistoryState(category, detail);
+  const nextState = getHistoryState(category, detail, window.history.state?.hasParent === true);
   savePageState(nextState);
   window.history.replaceState(nextState, "");
 }
@@ -1646,17 +1648,19 @@ function closeDetail() {
 
 function goBack() {
   const state = window.history.state;
-  if (state?.rokuMenu && state.category !== "home") {
+  if (state?.rokuMenu && state.category !== "home" && state.hasParent) {
     window.history.back();
     return;
   }
 
   if (poster.classList.contains("is-detail")) {
     closeDetail();
+    replaceHistoryState(activeCategory, null);
     return;
   }
 
   openHome();
+  replaceHistoryState("home", null);
 }
 
 function handleEdgeSwipeStart(event) {
@@ -1833,6 +1837,10 @@ window.addEventListener("popstate", (event) => {
   savePageState(state);
 });
 
-const initialPageState = normalizePageState(window.history.state) ?? loadPageState() ?? getHistoryState("home", null);
+const currentHistoryPageState = normalizePageState(window.history.state);
+const savedPageState = loadPageState();
+const initialPageState = currentHistoryPageState
+  ?? (savedPageState ? getHistoryState(savedPageState.category, savedPageState.detail, false) : null)
+  ?? getHistoryState("home", null);
 applyHistoryState(initialPageState);
 replaceHistoryState(initialPageState.category, initialPageState.detail);
