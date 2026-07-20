@@ -545,7 +545,7 @@ h1 {
 .poster.is-cocktails .cocktail-author-section .bar-drink img {
   width: min(100%, var(--image-width, 205px));
   padding-right: 50px;
-  filter: drop-shadow(12px 18px 13px var(--cocktail-shadow));
+  filter: none;
 }
 
 .poster.is-cocktails .cocktail-author-section .bar-drink span {
