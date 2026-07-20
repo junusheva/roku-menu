@@ -1261,13 +1261,14 @@ function fitCalloutsToPoster() {
 
         const candidateCenterY = top + height / 2;
         const expectedUpper = Math.sin(angle) < 0;
-        const wrongBand = expectedUpper ? candidateCenterY >= safeImage.top : candidateCenterY <= safeImage.bottom;
+        const wrongHemisphere = expectedUpper ? candidateCenterY >= centerY : candidateCenterY <= centerY;
+        const directionPenalty = wrongHemisphere ? 900 * Math.abs(Math.sin(angle)) : 0;
         const angularDistance = Math.abs(Math.atan2(candidateCenterY - centerY, left + width / 2 - centerX) - angle);
         const rayCrossings = occupiedRays.filter((occupiedRay) => linesIntersect(ray, occupiedRay)).length;
         const score =
           Math.hypot(left - desiredLeft, top - desiredTop) +
           angularDistance * 180 +
-          (wrongBand ? 2400 : 0) +
+          directionPenalty +
           (rayCrossesLabel ? 6000 : 0) +
           (labelCrossesRay ? 6000 : 0) +
           rayCrossings * 800 +
@@ -1548,7 +1549,7 @@ function openDetail(id, sourceButton) {
       (ingredient, index) => `
         <span
           class="callout-ray"
-          style="--delay: ${120 + index * 55}ms;"
+          style="--delay: ${40 + index * 25}ms;"
           aria-hidden="true"
         ></span>
         <div
@@ -1557,7 +1558,7 @@ function openDetail(id, sourceButton) {
           style="
             --box: ${ingredient.box};
             --size: ${ingredient.size};
-            --delay: ${120 + index * 55}ms;
+            --delay: ${40 + index * 25}ms;
           "
         >${ingredient.label}</div>
       `
