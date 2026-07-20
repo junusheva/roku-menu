@@ -63,11 +63,12 @@ const menuItems = [
       callout("малосольная форель", "160px"),
       callout("гуакамоле", "120px", "18px"),
       callout("творожный крем", "160px"),
-      callout("кунжут", "100px"),
+      callout("кунжут", "100px", undefined, { mobileOffsetX: 24 }),
       callout("зеленый лук", "130px", undefined, {
-        mobileLineX: 104,
-        mobileLineY: 296,
-        mobileLineRotate: -45,
+        mobileOffsetY: 88,
+        mobileLineX: 108,
+        mobileLineY: 568,
+        mobileLineRotate: 135,
         mobileRayLength: 10
       })
     ]
@@ -85,8 +86,9 @@ const menuItems = [
       callout("сыр Чеддер", "130px", "18px"),
       callout("соус кочуджан-мэйо", "170px", undefined, {
         offsetY: -15,
+        mobileOffsetY: 62,
         rayScale: 0.5,
-        rayOffsetY: 5
+        rayOffsetY: 0
       })
     ]
   },
@@ -99,10 +101,10 @@ const menuItems = [
     ingredients: [
       callout("яйца", "100px", "18px"),
       callout("гуакамоле", "120px", "18px"),
-      callout("обжаренные креветки", "165px"),
+      callout("кунжут", "100px"),
       callout("сыр Чеддер", "130px"),
       callout("соус кочуджан мэйо", "170px"),
-      callout("кунжут", "100px")
+      callout("обжаренные креветки", "165px")
     ]
   }
 ];
@@ -1142,6 +1144,65 @@ function getLineBoxEntryPoint(line, box) {
   };
 }
 
+function getLineBoxIntersectionRange(line, box) {
+  const { x1, y1, x2, y2 } = line;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  let min = 0;
+  let max = 1;
+  const edges = [
+    [-dx, x1 - box.left],
+    [dx, box.right - x1],
+    [-dy, y1 - box.top],
+    [dy, box.bottom - y1]
+  ];
+
+  for (const [direction, distance] of edges) {
+    if (direction === 0) {
+      if (distance < 0) return null;
+      continue;
+    }
+
+    const ratio = distance / direction;
+    if (direction < 0) min = Math.max(min, ratio);
+    if (direction > 0) max = Math.min(max, ratio);
+    if (min > max) return null;
+  }
+
+  return { start: min, end: max };
+}
+
+function clipRenderedLine(line, imageBox, labelBoxes) {
+  const originalLength = Math.hypot(line.x2 - line.x1, line.y2 - line.y1);
+  if (!originalLength) return line;
+
+  let start = 0;
+  let end = 1;
+  const imageIntersection = getLineBoxIntersectionRange(line, expandBox(imageBox, 10));
+
+  if (imageIntersection) {
+    if (imageIntersection.start <= 0.001) start = Math.max(start, imageIntersection.end);
+    else end = Math.min(end, imageIntersection.start);
+  }
+
+  labelBoxes.forEach((box) => {
+    const intersection = getLineBoxIntersectionRange(line, expandBox(box, 5));
+    if (!intersection) return;
+    if (intersection.start <= start + 0.001) start = Math.max(start, intersection.end);
+    else end = Math.min(end, intersection.start);
+  });
+
+  if (end <= start) return { ...line, x2: line.x1, y2: line.y1 };
+  const dx = line.x2 - line.x1;
+  const dy = line.y2 - line.y1;
+  return {
+    x1: line.x1 + dx * start,
+    y1: line.y1 + dy * start,
+    x2: line.x1 + dx * end,
+    y2: line.y1 + dy * end
+  };
+}
+
 function expandBox(box, gap) {
   return {
     left: box.left - gap,
@@ -1271,7 +1332,7 @@ function fitCalloutsToPoster() {
   const titleRect = posterTitle.getBoundingClientRect();
   const padding = 8;
   const imageGap = 42;
-  const labelGap = 18;
+  const labelGap = window.matchMedia("(max-width: 420px)").matches ? 24 : 18;
   const occupiedBoxes = [];
   const occupiedRays = [];
   const calloutElements = [...callouts.querySelectorAll(".callout")];
@@ -1346,7 +1407,15 @@ function fitCalloutsToPoster() {
     });
 
     if (bestClean.score < Number.POSITIVE_INFINITY) best = bestClean;
-    const offsetY = Number.parseFloat(calloutElement.dataset.offsetY) || 0;
+    const mobileOffsetX = Number.parseFloat(calloutElement.dataset.mobileOffsetX);
+    const mobileOffsetY = Number.parseFloat(calloutElement.dataset.mobileOffsetY);
+    const offsetX = window.matchMedia("(max-width: 420px)").matches && Number.isFinite(mobileOffsetX)
+      ? mobileOffsetX
+      : 0;
+    const offsetY = window.matchMedia("(max-width: 420px)").matches && Number.isFinite(mobileOffsetY)
+      ? mobileOffsetY
+      : Number.parseFloat(calloutElement.dataset.offsetY) || 0;
+    best.left = clamp(best.left + offsetX, minLeft, maxLeft);
     best.top = clamp(best.top + offsetY, minTop, maxTop);
     calloutElement.style.left = `${best.left}px`;
     calloutElement.style.top = `${best.top}px`;
@@ -1376,7 +1445,7 @@ function positionCalloutRays() {
   const centerX = imageRect.left - posterRect.left + imageRect.width / 2;
   const centerY = imageRect.top - posterRect.top + imageRect.height / 2;
   const imageGap = 18;
-  const labelGap = 18;
+  const labelGap = window.matchMedia("(max-width: 420px)").matches ? 24 : 18;
   const halfImageWidth = imageRect.width / 2 + imageGap;
   const halfImageHeight = imageRect.height / 2 + imageGap;
   const calloutElements = [...callouts.querySelectorAll(".callout")];
@@ -1441,9 +1510,26 @@ function positionCalloutRays() {
         : Number.isFinite(explicitRayY)
           ? explicitRayY
           : ray.y1 + rayOffsetY;
-    rayElement.style.setProperty("--line-x", `${lineX}px`);
-    rayElement.style.setProperty("--line-y", `${lineY}px`);
-    rayElement.style.setProperty("--line-l", `${lineLength}px`);
+    const radians = lineRotate * (Math.PI / 180);
+    const renderedLine = clipRenderedLine(
+      {
+        x1: lineX,
+        y1: lineY,
+        x2: lineX + Math.cos(radians) * lineLength,
+        y2: lineY + Math.sin(radians) * lineLength
+      },
+      {
+        left: imageRect.left - posterRect.left,
+        top: imageRect.top - posterRect.top,
+        right: imageRect.right - posterRect.left,
+        bottom: imageRect.bottom - posterRect.top
+      },
+      labelBoxes
+    );
+    const visibleLineLength = Math.hypot(renderedLine.x2 - renderedLine.x1, renderedLine.y2 - renderedLine.y1);
+    rayElement.style.setProperty("--line-x", `${renderedLine.x1}px`);
+    rayElement.style.setProperty("--line-y", `${renderedLine.y1}px`);
+    rayElement.style.setProperty("--line-l", `${visibleLineLength}px`);
     rayElement.style.setProperty("--line-r", `${lineRotate}deg`);
   });
 }
@@ -1652,6 +1738,8 @@ function openDetail(id, sourceButton) {
         <div
           class="callout"
           data-offset-y="${ingredient.offsetY ?? 0}"
+          data-mobile-offset-x="${ingredient.mobileOffsetX ?? ""}"
+          data-mobile-offset-y="${ingredient.mobileOffsetY ?? ""}"
           style="
             --box: ${ingredient.box};
             --size: ${ingredient.size};
