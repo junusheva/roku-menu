@@ -1607,7 +1607,7 @@ function openDetail(id, sourceButton) {
   zoomTimer = window.setTimeout(finishZoom, 1050);
 }
 
-function navigateDetail(direction) {
+function navigateDetail(direction, { replaceHistory = false } = {}) {
   if (!poster.classList.contains("is-detail")) return;
   const items = getActiveItems();
   const currentIndex = items.findIndex((item) => item.id === activeDetailId);
@@ -1617,7 +1617,11 @@ function navigateDetail(direction) {
   detailView.classList.remove("is-turning-prev", "is-turning-next");
   detailView.classList.add(direction < 0 ? "is-turning-prev" : "is-turning-next");
   openDetail(nextItem.id, null);
-  pushHistoryState(activeCategory, nextItem.id);
+  if (replaceHistory) {
+    replaceHistoryState(activeCategory, nextItem.id);
+  } else {
+    pushHistoryState(activeCategory, nextItem.id);
+  }
   window.setTimeout(() => {
     detailView.classList.remove("is-turning-prev", "is-turning-next");
   }, 460);
@@ -1695,7 +1699,7 @@ function handleDetailSwipeEnd(event) {
   const deltaY = Math.abs(touch.clientY - detailSwipe.startY);
   const shouldNavigate = detailSwipe.isHorizontal && Math.abs(deltaX) >= 55 && Math.abs(deltaX) > deltaY * 1.35;
   detailSwipe = null;
-  if (shouldNavigate) navigateDetail(deltaX < 0 ? 1 : -1);
+  if (shouldNavigate) navigateDetail(deltaX < 0 ? 1 : -1, { replaceHistory: true });
 }
 
 function handleEdgeSwipeMove(event) {
