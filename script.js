@@ -1647,20 +1647,16 @@ function closeDetail() {
 }
 
 function goBack() {
-  const state = window.history.state;
-  if (state?.rokuMenu && state.category !== "home" && state.hasParent) {
-    window.history.back();
-    return;
-  }
-
   if (poster.classList.contains("is-detail")) {
     closeDetail();
     replaceHistoryState(activeCategory, null);
     return;
   }
 
-  openHome();
-  replaceHistoryState("home", null);
+  if (activeCategory !== "home") {
+    openHome();
+    replaceHistoryState("home", null);
+  }
 }
 
 function handleEdgeSwipeStart(event) {
