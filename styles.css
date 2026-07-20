@@ -944,7 +944,6 @@ h1 {
 
 @media (max-width: 719px) {
   .poster.is-cocktails .cocktail-author-section .bar-drink-board {
-    padding-right: clamp(26px, 7vw, 32px);
     padding-left: 8px;
   }
 }
