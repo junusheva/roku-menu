@@ -13,14 +13,17 @@ const menuItems = [
       callout("кукуруза", "120px"),
       callout("красный лук", "140px", undefined, {
         offsetY: 16,
-        rayScale: 0.1,
-        rayOffsetX: 20,
-        rayOffsetY: -40,
+        rayScale: 0.35,
         mobileLineX: 132.061822,
         mobileLineY: 595,
         mobileRayLength: 20.01328
       }),
-      callout("сыр Чеддер", "118px", undefined, { mobileRayLength: 25 })
+      callout("сыр Чеддер", "118px", undefined, {
+        mobileLineX: 94,
+        mobileLineY: 548,
+        mobileLineRotate: -35,
+        mobileRayLength: 10
+      })
     ]
   },
   {
@@ -1372,13 +1375,15 @@ function positionCalloutRays() {
     const explicitRayY = Number.parseFloat(rayElement.dataset.rayY);
     const mobileLineX = Number.parseFloat(rayElement.dataset.mobileLineX);
     const mobileLineY = Number.parseFloat(rayElement.dataset.mobileLineY);
+    const mobileLineRotate = Number.parseFloat(rayElement.dataset.mobileLineRotate);
     const rayOffsetX = Number.parseFloat(rayElement.dataset.rayOffsetX) || 0;
     const rayOffsetY = Number.parseFloat(rayElement.dataset.rayOffsetY) || 0;
     const rayEndX = ray.x1 + (ray.x2 - ray.x1) * rayScale;
     const rayEndY = ray.y1 + (ray.y2 - ray.y1) * rayScale;
     const calculatedLength = Math.max(0, Math.hypot(rayEndX - ray.x1, rayEndY - ray.y1) - rayTrim);
     const lineLength = Number.isFinite(explicitRayLength) ? Math.max(0, explicitRayLength) : calculatedLength;
-    const lineRotate = Math.atan2(rayEndY - ray.y1, rayEndX - ray.x1) * (180 / Math.PI);
+    const calculatedRotate = Math.atan2(rayEndY - ray.y1, rayEndX - ray.x1) * (180 / Math.PI);
+    const lineRotate = isMobileCallout && Number.isFinite(mobileLineRotate) ? mobileLineRotate : calculatedRotate;
     const lineX =
       isMobileCallout && Number.isFinite(mobileLineX)
         ? mobileLineX
@@ -1591,6 +1596,7 @@ function openDetail(id, sourceButton) {
           data-mobile-ray-length="${ingredient.mobileRayLength ?? ""}"
           data-mobile-line-x="${ingredient.mobileLineX ?? ""}"
           data-mobile-line-y="${ingredient.mobileLineY ?? ""}"
+          data-mobile-line-rotate="${ingredient.mobileLineRotate ?? ""}"
           data-ray-x="${ingredient.rayX ?? ""}"
           data-ray-y="${ingredient.rayY ?? ""}"
           data-ray-offset-x="${ingredient.rayOffsetX ?? 0}"
