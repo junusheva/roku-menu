@@ -4,7 +4,7 @@ const menuItems = [
     name: "тунец",
     title: "ТУНЕЦ",
     price: "550с",
-    image: "assets/tuna-hq.png",
+    image: "assets/tuna-hq.webp",
     labelOffset: "-18px",
     ingredients: [
       callout("яйца", "110px", "18px"),
@@ -20,7 +20,7 @@ const menuItems = [
     name: "яичный",
     title: "ЯИЧНЫЙ",
     price: "450с",
-    image: "assets/egg-hq.png",
+    image: "assets/egg-hq.webp",
     ingredients: [
       callout("яйца", "110px", "18px"),
       callout("карамелизированный лук", "190px", "14px"),
@@ -33,7 +33,7 @@ const menuItems = [
     name: "чикен",
     title: "ЧИКЕН",
     price: "550с",
-    image: "assets/chicken-hq.png",
+    image: "assets/chicken-hq.webp",
     ingredients: [
       callout("курица в панировке<br> в сладко-остром соусе", "210px", "13px"),
       callout("сыр Чеддер", "130px"),
@@ -46,7 +46,7 @@ const menuItems = [
     name: "форель",
     title: "ФОРЕЛЬ",
     price: "550с",
-    image: "assets/trout-hq.png",
+    image: "assets/trout-hq.webp",
     ingredients: [
       callout("яйца", "110px"),
       callout("малосольная форель", "160px"),
@@ -61,7 +61,7 @@ const menuItems = [
     name: "говядина",
     title: "ГОВЯДИНА",
     price: "590с",
-    image: "assets/beef-hq.png",
+    image: "assets/beef-hq.webp",
     ingredients: [
       callout("яйца", "120px", "18px"),
       callout("бон филе", "132px", "18px"),
@@ -75,7 +75,7 @@ const menuItems = [
     name: "креветка",
     title: "КРЕВЕТКА",
     price: "550с",
-    image: "assets/shrimp-hq.png",
+    image: "assets/shrimp-hq.webp",
     ingredients: [
       callout("яйца", "100px", "18px"),
       callout("гуакамоле", "120px", "18px"),
@@ -94,7 +94,7 @@ const breakfastItems = [
     shortName: "базовый завтрак",
     title: "БАЗОВЫЙ ЗАВТРАК",
     price: "580с",
-    image: "assets/breakfast-basic.png",
+    image: "assets/breakfast-basic.webp",
     imageWidth: "205px",
     description:
       "2 вареных яйца, малосольная форель, сыр Маасдам, мисо масло, маринованный огурчик, ломтик хлеба",
@@ -109,7 +109,7 @@ const breakfastItems = [
     shortName: "французский омлет",
     title: "ФРАНЦУЗСКИЙ ОМЛЕТ",
     price: "320с",
-    image: "assets/breakfast-french-omelet.png",
+    image: "assets/breakfast-french-omelet.webp",
     imageWidth: "210px",
     description: "классический французский омлет с трюфельным соусом, посыпается пармезаном и жареным нори",
     ingredients: detailCallouts(["французский омлет", "трюфельный соус", "пармезан", "жареный нори"])
@@ -120,7 +120,7 @@ const breakfastItems = [
     shortName: "френч тост",
     title: "ФРЕНЧ ТОСТ",
     price: "470с",
-    image: "assets/breakfast-french-toast.png",
+    image: "assets/breakfast-french-toast.webp",
     imageWidth: "205px",
     description:
       "пропитанный хлеб с карамелизированной корочкой, подается с кремом, карамелизированный бананом и арахисом",
@@ -138,7 +138,7 @@ const breakfastItems = [
     shortName: "гранола с<br>манговым йогуртом",
     title: "ГРАНОЛА",
     price: "550с",
-    image: "assets/breakfast-granola.png",
+    image: "assets/breakfast-granola.webp",
     imageWidth: "145px",
     description: "манговый йогурт с лемонграссом, домашняя гранола, засахаренный арахис, голубика",
     ingredients: detailCallouts(["манговый йогурт", "лемонграсс", "домашняя гранола", "засахаренный<br>арахис", "голубика"])
@@ -149,7 +149,7 @@ const breakfastItems = [
     shortName: "авокадо тост",
     title: "АВОКАДО ТОСТ",
     price: "570с",
-    image: "assets/breakfast-avocado-toast.png",
+    image: "assets/breakfast-avocado-toast.webp",
     imageWidth: "205px",
     description: "творожный крем, зеленый горошек, авокадо, шпинат, соус песто, маринованное яйцо",
     ingredients: detailCallouts(
@@ -163,7 +163,7 @@ const breakfastItems = [
     shortName: "чикен салат",
     title: "ЧИКЕН САЛАТ",
     price: "350с",
-    image: "assets/breakfast-chicken-salad.png",
+    image: "assets/breakfast-chicken-salad.webp",
     imageWidth: "165px",
     description: "курица в панировке, салат айсберг, соус айоли, лимон, посыпается пармезаном и домашними чипсами",
     ingredients: detailCallouts(
@@ -180,7 +180,7 @@ const breakfastItems = [
     shortName: "зеленый салат",
     title: "ЗЕЛЕНЫЙ САЛАТ",
     price: "390с",
-    image: "assets/breakfast-green-salad.png",
+    image: "assets/breakfast-green-salad.webp",
     imageWidth: "205px",
     description: "",
     ingredients: detailCallouts(["зеленые овощи", "авокадо", "огурец", "нори", "лимон", "кунжут"])
@@ -194,7 +194,7 @@ const eveningItems = [
     shortName: "карааге с<br>айоли",
     title: "КАРААГЕ С АЙОЛИ",
     price: "380с",
-    image: "assets/evening-karaage-aioli.png",
+    image: "assets/evening-karaage-aioli.webp",
     imageWidth: "220px",
     description: "курица в двойной панировке, посыпается пармезаном и цедрой лайма, подаются с соусом айоли",
     ingredients: detailCallouts(["курица в двойной<br>панировке", "пармезан", "цедра лайма", "соус айоли"])
@@ -205,7 +205,7 @@ const eveningItems = [
     shortName: "карааге с<br>карамельным<br>кочуджаном",
     title: "КАРААГЕ",
     price: "380с",
-    image: "assets/evening-karaage-gochujang.png",
+    image: "assets/evening-karaage-gochujang.webp",
     imageWidth: "215px",
     description:
       "курица в двойной панировке в сладко-остром соусе, посыпается арахисом и сычуанским перцем, продается с греческим йогуртом",
@@ -223,7 +223,7 @@ const eveningItems = [
     shortName: "карри кацу",
     title: "КАРРИ КАЦУ",
     price: "600с",
-    image: "assets/evening-curry-katsu.png",
+    image: "assets/evening-curry-katsu.webp",
     imageWidth: "205px",
     description: "курица в панировке, рис, соус карри, маринованные огурчики",
     ingredients: detailCallouts(["курица в панировке", "рис", "соус карри", "маринованные<br>огурчики"])
@@ -234,7 +234,7 @@ const eveningItems = [
     shortName: "донбури с<br>форелью",
     title: "ДОНБУРИ С ФОРЕЛЬЮ",
     price: "660с",
-    image: "assets/evening-donburi-trout.png",
+    image: "assets/evening-donburi-trout.webp",
     imageWidth: "190px",
     description: "запеченная форель, рис, мисо соус, жареный нори, капуста пак-чой, маринованная редька дайкон",
     ingredients: detailCallouts([
@@ -252,7 +252,7 @@ const eveningItems = [
     shortName: "чикен салат",
     title: "ЧИКЕН САЛАТ",
     price: "350с",
-    image: "assets/breakfast-chicken-salad.png",
+    image: "assets/breakfast-chicken-salad.webp",
     imageWidth: "165px",
     description: "курица в панировке, салат айсберг, соус айоли, лимон, посыпается пармезаном и домашними чипсами",
     ingredients: detailCallouts(
@@ -269,7 +269,7 @@ const eveningItems = [
     shortName: "зеленый салат",
     title: "ЗЕЛЕНЫЙ САЛАТ",
     price: "390с",
-    image: "assets/breakfast-green-salad.png",
+    image: "assets/breakfast-green-salad.webp",
     imageWidth: "205px",
     description: "авокадо, брокколи, стручковая фасоль, салат айсберг, шпинат, ореховый соус, посыпается жареным нори",
     ingredients: detailCallouts(
@@ -283,7 +283,7 @@ const eveningItems = [
     shortName: "маринованные<br>огурцы",
     title: "МАРИНОВАННЫЕ ОГУРЦЫ",
     price: "170с",
-    image: "assets/evening-pickles.png",
+    image: "assets/evening-pickles.webp",
     imageWidth: "185px",
     description: "маринованные огурцы, посыпается арахисом и кинзой",
     ingredients: detailCallouts(["маринованные<br>огурцы", "арахис", "кинза"])
@@ -294,7 +294,7 @@ const eveningItems = [
     shortName: "корн рибс",
     title: "КОРН РИБС",
     price: "280с",
-    image: "assets/evening-corn-ribs.png",
+    image: "assets/evening-corn-ribs.webp",
     imageWidth: "205px",
     description: "обжаренная кукуруза, мисо масло, жареный нори, пармезан",
     ingredients: detailCallouts(["обжаренная кукуруза", "мисо масло", "жареный нори", "пармезан"])
@@ -305,7 +305,7 @@ const eveningItems = [
     shortName: "чипсы с<br>копченым<br>курутом",
     title: "ЧИПСЫ С КУРУТОМ",
     price: "120с",
-    image: "assets/evening-chips-kurut.png",
+    image: "assets/evening-chips-kurut.webp",
     imageWidth: "220px",
     description: "Домашние чипсы, посыпается копченым курутом и подается с соусом айоли",
     ingredients: detailCallouts(["домашние чипсы", "копченый курут", "соус айоли"])
@@ -316,49 +316,49 @@ const barDrinkItems = [
   {
     name: "Раф с кедровыми орехами",
     price: "350с",
-    image: "assets/bar-raf-pine-nuts.png",
+    image: "assets/bar-raf-pine-nuts.webp",
     imageWidth: "205px"
   },
   {
     name: "Юдзу эспрессо тоник",
     price: "350с",
-    image: "assets/bar-yuzu-espresso-tonic.png",
+    image: "assets/bar-yuzu-espresso-tonic.webp",
     imageWidth: "190px"
   },
   {
     name: "Эспрессо тоник",
     price: "300с",
-    image: "assets/bar-espresso-tonic.png",
+    image: "assets/bar-espresso-tonic.webp",
     imageWidth: "118px"
   },
   {
     name: "Апельсиновый бамбл",
     price: "420с",
-    image: "assets/bar-orange-bumble.png",
+    image: "assets/bar-orange-bumble.webp",
     imageWidth: "205px"
   },
   {
     name: "Гранатовый бамбл",
     price: "480с",
-    image: "assets/bar-pomegranate-bumble.png",
+    image: "assets/bar-pomegranate-bumble.webp",
     imageWidth: "190px"
   },
   {
     name: "Монблан",
     price: "350с",
-    image: "assets/bar-montblanc.png",
+    image: "assets/bar-montblanc.webp",
     imageWidth: "190px"
   },
   {
     name: "Колд Брю вишня",
     price: "350с",
-    image: "assets/bar-cold-brew-cherry.png",
+    image: "assets/bar-cold-brew-cherry.webp",
     imageWidth: "185px"
   },
   {
     name: "Колд брю малина",
     price: "350с",
-    image: "assets/bar-cold-brew-raspberry.png",
+    image: "assets/bar-cold-brew-raspberry.webp",
     imageWidth: "185px"
   }
 ];
@@ -367,61 +367,61 @@ const matchaItems = [
   {
     name: "Матча шот",
     price: "200с",
-    image: "assets/bar-espresso-tonic.png",
+    image: "assets/bar-espresso-tonic.webp",
     imageWidth: "118px"
   },
   {
     name: "Матча латте",
     price: "350с",
-    image: "assets/bar-matcha-latte.png",
+    image: "assets/bar-matcha-latte.webp",
     imageWidth: "205px"
   },
   {
     name: "Матча латте на альтернативном молоке",
     price: "390с",
-    image: "assets/bar-matcha-alternative.png",
+    image: "assets/bar-matcha-alternative.webp",
     imageWidth: "190px"
   },
   {
     name: "Матча вишня-миндаль",
     price: "450с",
-    image: "assets/bar-matcha-cherry-almond.png",
+    image: "assets/bar-matcha-cherry-almond.webp",
     imageWidth: "185px"
   },
   {
     name: "Матча манго-юдзу",
     price: "450с",
-    image: "assets/bar-matcha-mango-yuzu.png",
+    image: "assets/bar-matcha-mango-yuzu.webp",
     imageWidth: "185px"
   },
   {
     name: "Матча алоэ-клауди",
     price: "450с",
-    image: "assets/bar-matcha-aloe-cloudy.png",
+    image: "assets/bar-matcha-aloe-cloudy.webp",
     imageWidth: "235px"
   },
   {
     name: "Матча клубника",
     price: "450с",
-    image: "assets/bar-matcha-strawberry.png",
+    image: "assets/bar-matcha-strawberry.webp",
     imageWidth: "235px"
   },
   {
     name: "Матча маракуйя-жасмин",
     price: "390с",
-    image: "assets/bar-matcha-passion-jasmine.png",
+    image: "assets/bar-matcha-passion-jasmine.webp",
     imageWidth: "235px"
   },
   {
     name: "Матча тоник персик",
     price: "350с",
-    image: "assets/bar-matcha-tonic-peach.png",
+    image: "assets/bar-matcha-tonic-peach.webp",
     imageWidth: "190px"
   },
   {
     name: "Ходзича банан",
     price: "420с",
-    image: "assets/bar-hojicha-banana.png",
+    image: "assets/bar-hojicha-banana.webp",
     imageWidth: "185px"
   }
 ];
@@ -430,49 +430,49 @@ const coldDrinkItems = [
   {
     name: "Лимонад Грейпфрут-личи",
     price: "320с",
-    image: "assets/bar-lemonade-grapefruit-lychee.png",
+    image: "assets/bar-lemonade-grapefruit-lychee.webp",
     imageWidth: "190px"
   },
   {
     name: "Лимонад Юдзу-имбирь",
     price: "320с",
-    image: "assets/bar-lemonade-yuzu-ginger.png",
+    image: "assets/bar-lemonade-yuzu-ginger.webp",
     imageWidth: "190px"
   },
   {
     name: "Лимонад Щавель-дыня",
     price: "320с",
-    image: "assets/bar-lemonade-sorrel-melon.png",
+    image: "assets/bar-lemonade-sorrel-melon.webp",
     imageWidth: "190px"
   },
   {
     name: "Лимонад Ежевика",
     price: "320с",
-    image: "assets/bar-lemonade-blackberry.png",
+    image: "assets/bar-lemonade-blackberry.webp",
     imageWidth: "190px"
   },
   {
     name: "Лимонад Каламанси-лайм",
     price: "320с",
-    image: "assets/bar-lemonade-calamansi-lime.png",
+    image: "assets/bar-lemonade-calamansi-lime.webp",
     imageWidth: "190px"
   },
   {
     name: "Смузи Тропик-матча",
     price: "470с",
-    image: "assets/bar-smoothie-tropic-matcha.png",
+    image: "assets/bar-smoothie-tropic-matcha.webp",
     imageWidth: "190px"
   },
   {
     name: "Смузи манго-банан",
     price: "470с",
-    image: "assets/bar-smoothie-mango-banana.png",
+    image: "assets/bar-smoothie-mango-banana.webp",
     imageWidth: "190px"
   },
   {
     name: "Айс-ти жасмин-персик",
     price: "390с",
-    image: "assets/bar-iced-tea-jasmine-peach.png",
+    image: "assets/bar-iced-tea-jasmine-peach.webp",
     imageWidth: "118px"
   }
 ];
@@ -481,19 +481,19 @@ const detoxItems = [
   {
     name: "Зеленый",
     price: "220с",
-    image: "assets/bar-detox-green.png",
+    image: "assets/bar-detox-green.webp",
     imageWidth: "185px"
   },
   {
     name: "Цитрус",
     price: "220с",
-    image: "assets/bar-detox-citrus.png",
+    image: "assets/bar-detox-citrus.webp",
     imageWidth: "185px"
   },
   {
     name: "Клубника-злаки",
     price: "220с",
-    image: "assets/bar-detox-strawberry-grains.png",
+    image: "assets/bar-detox-strawberry-grains.webp",
     imageWidth: "185px"
   }
 ];
@@ -505,7 +505,7 @@ const cocktailItems = [
     shortName: "[ROKU]",
     title: "[ROKU]",
     price: "700с",
-    image: "assets/cocktail-roku.png",
+    image: "assets/cocktail-roku.webp",
     imageWidth: "205px",
     ingredients: detailCallouts(["джин", "соджу", "юдзу", "нитро-пена"])
   },
@@ -515,7 +515,7 @@ const cocktailItems = [
     shortName: "Gekko",
     title: "GEKKO",
     price: "700с",
-    image: "assets/cocktail-gekko.png",
+    image: "assets/cocktail-gekko.webp",
     imageWidth: "205px",
     ingredients: detailCallouts(["водка", "виноградный соджу", "жасминовый кордиал"])
   },
@@ -525,7 +525,7 @@ const cocktailItems = [
     shortName: "Vermilion",
     title: "VERMILION",
     price: "700с",
-    image: "assets/cocktail-vermilion.png",
+    image: "assets/cocktail-vermilion.webp",
     imageWidth: "205px",
     ingredients: detailCallouts(["Aperol", "Martini Rosso", "ликер личи", "молочный кордиал"])
   },
@@ -535,7 +535,7 @@ const cocktailItems = [
     shortName: "Gold Static",
     title: "GOLD STATIC",
     price: "700с",
-    image: "assets/cocktail-gold-static.png",
+    image: "assets/cocktail-gold-static.webp",
     imageWidth: "205px",
     ingredients: detailCallouts(["ананасовый кордиал", "соджу ананас", "саке", "медовый сироп"])
   },
@@ -545,7 +545,7 @@ const cocktailItems = [
     shortName: "Kurasango",
     title: "KURASANGO",
     price: "700с",
-    image: "assets/cocktail-kurasango.png",
+    image: "assets/cocktail-kurasango.webp",
     imageWidth: "205px",
     ingredients: detailCallouts(["Sauvignon Blanc", "соджу черника", "джин", "молочный кордиал", "шапка маракуйя-черника"])
   },
@@ -555,7 +555,7 @@ const cocktailItems = [
     shortName: "Garnet",
     title: "GARNET",
     price: "700с",
-    image: "assets/cocktail-garnet.png",
+    image: "assets/cocktail-garnet.webp",
     imageWidth: "205px",
     ingredients: detailCallouts(["текила", "гранат", "кордиал гранат-груша"])
   },
@@ -565,7 +565,7 @@ const cocktailItems = [
     shortName: "Akane",
     title: "AKANE",
     price: "700с",
-    image: "assets/cocktail-akane.png",
+    image: "assets/cocktail-akane.webp",
     imageWidth: "205px",
     ingredients: detailCallouts(["ром", "кокосовый кордиал", "чай карамельный ройбуш"])
   },
@@ -575,7 +575,7 @@ const cocktailItems = [
     shortName: "Éclat",
     title: "ÉCLAT",
     price: "700с",
-    image: "assets/cocktail-eclat.png",
+    image: "assets/cocktail-eclat.webp",
     imageWidth: "190px",
     ingredients: detailCallouts(["ром", "манговый кордиал", "маракуйя"])
   }
@@ -962,7 +962,7 @@ function renderBar() {
     <div class="bar-page">
       <section class="bar-coffee-section" aria-label="Кофе">
         <h2>КОФЕ:</h2>
-        <img class="bar-coffee" src="assets/coffee.png" alt="" />
+        <img class="bar-coffee" src="assets/coffee.webp" alt="" />
         <div class="bar-list">
           <ul>
             <li><span>Доппио</span><b>250с</b></li>
