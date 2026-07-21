@@ -792,19 +792,26 @@ h1 {
   z-index: 10;
   top: 50%;
   display: none;
+  place-items: center;
   width: 52px;
   height: 52px;
-  padding: 0 0 5px;
+  padding: 0;
   border: 1px solid rgba(8, 7, 8, 0.28);
   border-radius: 50%;
   background: rgba(251, 247, 244, 0.78);
   color: var(--ink);
   cursor: pointer;
   font-size: 40px;
-  line-height: 1;
+  line-height: 0;
   pointer-events: auto;
   transform: translateY(-50%);
   backdrop-filter: blur(8px);
+}
+
+.detail-arrow > span {
+  display: block;
+  line-height: 1;
+  transform: translateY(-2px);
 }
 
 .detail-arrow-prev {
@@ -969,8 +976,8 @@ h1 {
     width: min(58vw, 500px);
   }
 
-  .detail-arrow:not([hidden]) {
-    display: block;
+  .poster.is-detail .detail-arrow:not([hidden]) {
+    display: grid;
   }
 
   .menu-board {
