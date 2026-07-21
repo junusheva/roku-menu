@@ -973,7 +973,12 @@ h1 {
 
   .poster.is-detail .toast-stage {
     top: clamp(300px, 34svh, 390px);
-    width: min(58vw, 500px);
+    width: clamp(500px, 48%, 650px);
+  }
+
+  .poster.is-detail .detail-toast {
+    max-height: 68vh;
+    object-fit: contain;
   }
 
   .poster.is-detail .detail-arrow:not([hidden]) {
@@ -1049,7 +1054,7 @@ h1 {
 
   .poster.is-detail .toast-stage {
     top: clamp(290px, 31svh, 370px);
-    width: clamp(480px, 50vw, 680px);
+    width: clamp(500px, 48%, 650px);
   }
 
   .callout {

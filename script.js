@@ -599,6 +599,7 @@ let activeDetailId = null;
 let edgeSwipe = null;
 let detailSwipe = null;
 const savedPageKey = "roku-menu-page";
+const detailImagePreloads = new Map();
 
 function syncPageTheme() {
   const isCocktails = poster.classList.contains("is-cocktails");
@@ -674,6 +675,23 @@ function getActiveItems() {
   if (activeCategory === "bar") return [...barDrinkItems, ...matchaItems, ...coldDrinkItems, ...detoxItems];
   if (activeCategory === "cocktails") return cocktailItems;
   return menuItems;
+}
+
+function preloadDetailImage(src, priority = "low") {
+  if (!src || detailImagePreloads.has(src)) return;
+  const image = new Image();
+  image.decoding = "async";
+  image.fetchPriority = priority;
+  image.src = src;
+  detailImagePreloads.set(src, image);
+}
+
+function preloadAdjacentDetailImages(items, currentId) {
+  if (items.length < 2) return;
+  const currentIndex = items.findIndex((item) => item.id === currentId);
+  if (currentIndex < 0) return;
+  preloadDetailImage(items[(currentIndex - 1 + items.length) % items.length].image);
+  preloadDetailImage(items[(currentIndex + 1) % items.length].image);
 }
 
 function getActiveTitle() {
@@ -802,12 +820,20 @@ function applyHistoryState(state) {
   }
 }
 
+function getThumbnailPath(image) {
+  return image.replace(/\.webp$/, "-thumb.webp");
+}
+
+function getMenuImageLoadingAttributes(index) {
+  return index < 4 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+}
+
 function renderToasts() {
   menuView.innerHTML = `
     <div class="menu-board">
     ${menuItems
     .map(
-      (item) => `
+      (item, index) => `
         <button
           class="menu-item"
           type="button"
@@ -816,7 +842,7 @@ function renderToasts() {
           aria-label="${item.title}"
         >
           <span class="menu-item-content">
-            <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
+            <img src="${getThumbnailPath(item.image)}" alt="" ${getMenuImageLoadingAttributes(index)} decoding="async" draggable="false" />
             <span>${item.name}<br>${item.price}</span>
           </span>
         </button>
@@ -833,7 +859,7 @@ function renderBreakfasts() {
     <div class="breakfast-board">
     ${breakfastItems
     .map(
-      (item) => `
+      (item, index) => `
         <button
           class="breakfast-item"
           type="button"
@@ -841,7 +867,7 @@ function renderBreakfasts() {
           style="--image-width: ${item.imageWidth};"
           aria-label="${item.title}"
         >
-          <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
+          <img src="${getThumbnailPath(item.image)}" alt="" ${getMenuImageLoadingAttributes(index)} decoding="async" draggable="false" />
           <span>${item.shortName}<br>${item.price}</span>
         </button>
       `
@@ -857,7 +883,7 @@ function renderEvening() {
     <div class="breakfast-board">
     ${eveningItems
     .map(
-      (item) => `
+      (item, index) => `
         <button
           class="breakfast-item"
           type="button"
@@ -865,7 +891,7 @@ function renderEvening() {
           style="--image-width: ${item.imageWidth};"
           aria-label="${item.title}"
         >
-          <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
+          <img src="${getThumbnailPath(item.image)}" alt="" ${getMenuImageLoadingAttributes(index)} decoding="async" draggable="false" />
           <span>${item.shortName}<br>${item.price}</span>
         </button>
       `
@@ -883,17 +909,17 @@ function renderBarDrinkSection(title, ariaLabel, items, options = {}) {
         <div class="bar-drink-board">
           ${items
             .map(
-              (item) =>
+              (item, index) =>
                 options.clickable
                   ? `
                 <button class="bar-drink bar-drink-button" type="button" data-id="${item.id}" style="--image-width: ${item.imageWidth};" aria-label="${item.title}">
-                  <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
+                  <img src="${getThumbnailPath(item.image)}" alt="" ${getMenuImageLoadingAttributes(index)} decoding="async" draggable="false" />
                   <span>${item.name}<br>${item.price}</span>
                 </button>
               `
                   : `
                 <article class="bar-drink" style="--image-width: ${item.imageWidth};">
-                  <img src="${item.image}" alt="" loading="lazy" decoding="async" draggable="false" />
+                  <img src="${getThumbnailPath(item.image)}" alt="" ${getMenuImageLoadingAttributes(index)} decoding="async" draggable="false" />
                   <span>${item.name}<br>${item.price}</span>
                 </article>
               `
@@ -1541,9 +1567,9 @@ function openDetail(id, sourceButton) {
   posterTitle.textContent = item.title;
   detailPrice.textContent = item.price || "";
   detailImage.loading = "eager";
+  detailImage.fetchPriority = "high";
   detailImage.src = item.image;
   detailImage.alt = item.title;
-  detailImage.fetchPriority = "high";
   callouts.innerHTML = item.ingredients
     .map(
       (ingredient, index) => `
@@ -1589,6 +1615,7 @@ function openDetail(id, sourceButton) {
   const hasAdjacentItems = detailItems.length > 1;
   detailPrev.hidden = !hasAdjacentItems;
   detailNext.hidden = !hasAdjacentItems;
+  preloadAdjacentDetailImages(detailItems, item.id);
 
   requestAnimationFrame(() => {
     detailView.style.transition = "";
@@ -1731,6 +1758,17 @@ mainView.addEventListener("click", (event) => {
   if (!categoryButton) return;
   navigateToCategory(categoryButton.dataset.category);
 });
+
+function preloadIntendedMenuItem(event) {
+  const itemButton = event.target.closest?.(".menu-item, .breakfast-item, .bar-drink-button");
+  if (!itemButton) return;
+  const item = getActiveItems().find((menuItem) => menuItem.id === itemButton.dataset.id);
+  if (item) preloadDetailImage(item.image, "high");
+}
+
+menuView.addEventListener("pointerover", preloadIntendedMenuItem);
+menuView.addEventListener("focusin", preloadIntendedMenuItem);
+menuView.addEventListener("touchstart", preloadIntendedMenuItem, { passive: true });
 
 menuView.addEventListener("click", (event) => {
   const itemButton = event.target.closest(".menu-item, .breakfast-item, .bar-drink-button");
